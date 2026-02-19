@@ -2,12 +2,13 @@
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Autonomous Drone Flight Path - Case Study</title>
+<title>BlendViewer - Case Study</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="../site.config.js"></script>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -154,7 +155,7 @@
 </main>
 <footer class="mt-32 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 dark:text-slate-400">
 <div class="mb-4 md:mb-0">
-                © 2026 Maximus Bergmann. Engineered in <span class="text-slate-900 dark:text-white">Johannesburg</span>.
+                © <script> document.write(`${SiteConfig.footer.year}`); </script> Maximus Bergmann. Engineered in <span class="text-slate-900 dark:text-white">Johannesburg</span>.
             </div>
 <div class="flex gap-8">
 <a class="hover:text-primary transition-colors flex items-center gap-2" href="https://github.com/Chester-xx">
