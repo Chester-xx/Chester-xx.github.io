@@ -337,7 +337,7 @@ const nodes = [
   { id: 'qt_quick3d', x: 550, y: 1230, layer: 'ext', icon: '🌐', title: 'Qt Quick 3D', sub: 'View3D · Node3D\nglTF pipeline', tag: 'Qt 6 Module', desc: 'The 3D rendering module. Provides View3D, Node3D, Camera, Light, SceneLoader, and the full glTF import/render pipeline.', deps: [] },
 
   // VS + Extension
-  { id: 'vs_qtvs', x: 850, y: 780, layer: 'system', icon: '🛠', title: 'Visual Studio\n+ Qt VS Tools', sub: 'IDE · .vcxproj\nbuild system', tag: 'Tooling', desc: 'Development IDE. Qt VS Tools extension integrates Qt project configuration, qmake/cmake, QML debugging, and resource compilation (qrc) directly into Visual Studio.', deps: ['windeployqt'] },
+  { id: 'vs_qtvs', x: 850, y: 780, layer: 'system', icon: '🛠', title: 'Visual Studio\n+ Qt VS Tools', sub: 'IDE · CMake\nbuild system', tag: 'Tooling', desc: 'Development IDE. Qt VS Tools extension integrates Qt project configuration, qmake/cmake, QML debugging, and resource compilation (qrc) directly into Visual Studio.', deps: ['windeployqt'] },
 ];
 
 const edges = [
@@ -373,8 +373,9 @@ const edges = [
 ];
 
 // ─── Viewport state ────────────────────────────────────────────────────────────
-let scale = 0.72;
-let offsetX = -80, offsetY = 0;
+let scale = 1;
+let offsetX = window.innerWidth / 2 - 500 * 1;
+let offsetY = window.innerHeight / 2 - 600 * 1;
 let isDragging = false, dragStart = {x:0,y:0}, dragOffset = {x:0,y:0};
 let activeNode = null;
 
@@ -505,7 +506,9 @@ wrap.addEventListener('wheel', e => {
 function zoomIn()  { scale = Math.min(scale * 1.15, 2.5); applyTransform(); }
 function zoomOut() { scale = Math.max(scale * 0.85, 0.2); applyTransform(); }
 function resetView() {
-  scale = 0.72; offsetX = -80; offsetY = 0;
+  scale = 1;
+  offsetX = window.innerWidth / 2 - 500 * 1;
+  offsetY = window.innerHeight / 2 - 600 * 1;
   applyTransform();
   deselectNode();
 }
