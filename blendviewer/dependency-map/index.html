@@ -489,6 +489,51 @@ window.addEventListener('mouseup', () => {
   wrap.style.cursor = 'grab';
 });
 
+// ─── Touch Support ─────────────────────────────────────────────────────────────
+let lastTouchDist = null;
+
+wrap.addEventListener('touchstart', e => {
+    e.preventDefault();
+    if (e.touches.length === 1) {
+        isDragging = true;
+        dragStart = { x: e.touches[0].clientX - offsetX, y: e.touches[0].clientY - offsetY };
+    } else if (e.touches.length === 2) {
+        lastTouchDist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+        );
+    }
+}, { passive: false });
+
+wrap.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (e.touches.length === 1 && isDragging) {
+        offsetX = e.touches[0].clientX - dragStart.x;
+        offsetY = e.touches[0].clientY - dragStart.y;
+        applyTransform();
+    } else if (e.touches.length === 2) {
+        const dist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+        );
+        if (lastTouchDist) {
+            const factor = dist / lastTouchDist;
+            const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            const my = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            offsetX = mx + (offsetX - mx) * factor;
+            offsetY = my + (offsetY - my) * factor;
+            scale = Math.max(0.2, Math.min(2.5, scale * factor));
+            applyTransform();
+        }
+        lastTouchDist = dist;
+    }
+}, { passive: false });
+
+wrap.addEventListener('touchend', e => {
+    isDragging = false;
+    lastTouchDist = null;
+});
+
 // ─── Zoom ─────────────────────────────────────────────────────────────────────
 wrap.addEventListener('wheel', e => {
   e.preventDefault();
