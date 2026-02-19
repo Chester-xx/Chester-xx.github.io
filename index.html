@@ -1,282 +1,206 @@
 <!DOCTYPE html>
-
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>3D glTF Viewer Main Interface</title>
-<!-- Fonts -->
+<title>Max Bergmann - Engineering Portfolio</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script>
+<script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
-                extend: {
-                    colors: {
-                        "primary": "#137fec",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#101922",
-                        "sidebar-dark": "#111a22",
-                        "panel-dark": "#1a2634",
-                        "border-dark": "#2a3b4f"
-                    },
-                    fontFamily: {
-                        "display": ["Space Grotesk", "sans-serif"],
-                        "body": ["Space Grotesk", "sans-serif"]
-                    },
-                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            extend: {
+                colors: {
+                "primary": "#448AFF", 
+                "background-light": "#f5f8f8",
+                "background-dark": "#0A0A0B",
+                "card-dark": "#121214",
                 },
+                fontFamily: {
+                "display": ["Space Grotesk", "sans-serif"]
+                },
+                borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
             },
         }
     </script>
 <style>
-        /* Custom range slider styling for a more native/technical feel */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            background: transparent;
-        }
-        
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 16px;
-            width: 16px;
-            border-radius: 50%;
-            background: #137fec;
-            cursor: pointer;
-            margin-top: -6px;
-            box-shadow: 0 0 0 2px #111a22; 
-        }
-
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            cursor: pointer;
-            background: #324d67;
-            border-radius: 2px;
-        }
-
-        input[type=range]:focus::-webkit-slider-runnable-track {
-            background: #3a5775;
-        }
-        
-        /* Grid background pattern for the viewport */
-        .viewport-grid {
+        .bg-grid-pattern {
+            background-image: linear-gradient(to right, #27272a 1px, transparent 1px),
+            linear-gradient(to bottom, #27272a 1px, transparent 1px);
             background-size: 40px 40px;
-            background-image:
-                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
         }
     </style>
 </head>
-<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-screen flex flex-col">
-<div class="flex flex-1 overflow-hidden">
-<!-- Sidebar -->
-<aside class="w-80 flex-shrink-0 flex flex-col bg-sidebar-dark border-r border-border-dark h-full z-10 shadow-xl">
-<!-- Header -->
-<div class="p-5 border-b border-border-dark flex justify-between items-center bg-[#0d141b]">
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col antialiased selection:bg-primary selection:text-white">
+<div class="fixed inset-0 pointer-events-none opacity-[0.05] z-0 bg-grid-pattern"></div>
+<div class="relative z-10 flex flex-col min-h-screen max-w-[1440px] mx-auto px-6 md:px-12 lg:px-20 py-10">
+<header class="flex justify-between items-center mb-20 lg:mb-32">
+<div class="text-sm font-bold tracking-widest uppercase text-slate-400 dark:text-slate-500">
+                Project Portfolio
+            </div>
+<nav class="flex gap-8">
+<a class="text-sm font-medium text-slate-300 transition-colors duration-200 hover:text-[#448AFF]" href="https://chester-xx.github.io/">Home</a>
+<a class="text-sm font-medium text-slate-300 transition-colors duration-200 hover:text-[#448AFF]" href="#">About</a>
+<a class="text-sm font-medium text-slate-300 transition-colors duration-200 hover:text-[#448AFF]" href="#">Contact</a>
+</nav>
+</header>
+<main class="flex-grow flex flex-col justify-center">
+<div class="space-y-6">
+<h1 class="text-6xl md:text-8xl lg:text-[10rem] font-bold leading-[0.85] tracking-tight -ml-1 md:-ml-2 text-slate-900 dark:text-white">
+                    Max Bergmann
+                </h1>
+<div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 mt-4 border-t border-slate-200 dark:border-slate-800 pt-8">
+<h2 class="text-xl md:text-2xl font-medium tracking-wide text-slate-500 dark:text-slate-400 uppercase max-w-xs">
+                        Software Development<br class="hidden lg:block"/>Engineer &amp; IT
+                    </h2>
+<div class="max-w-2xl text-lg md:text-xl lg:text-2xl leading-relaxed font-light text-slate-600 dark:text-slate-200">
+<p>
+                            <span class="text-primary font-normal">Software engineering student</span> who enjoys building things that actually do something. Drawn to practical projects and picking up new tools — exploring <span class="text-primary font-normal">Qt, OpenGL, and C</span>.
+                        </p>
+</div>
+</div>
+</div>
+<div class="mt-32">
+<div class="flex items-center gap-4 mb-12">
+<span class="h-px w-8 bg-primary"></span>
+<h3 class="text-sm font-bold tracking-[0.2em] text-primary uppercase">Project Outlines</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+<article class="group relative flex flex-col h-full bg-slate-200 dark:bg-card-dark rounded-lg overflow-hidden border border-transparent dark:border-slate-800 hover:border-primary/50 transition-all duration-300">
+<div class="aspect-[4/3] w-full overflow-hidden bg-slate-800">
+<img alt="BlendViewer User Interface" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" data-alt="BlendViewer User Interface" src="assets/BlendViewer.png"/>
+</div>
+<div class="p-6 flex flex-col justify-between flex-grow">
 <div>
-<h1 class="text-white text-lg font-bold tracking-tight">glTF Studio</h1>
-<p class="text-slate-400 text-xs font-normal">v2.4.0 • Build 892</p>
+<div class="flex flex-wrap gap-2 mb-3">
+<span class="text-[10px] uppercase tracking-wider font-bold text-primary bg-primary/10 px-2 py-1 rounded">C++</span>
+<span class="text-[10px] uppercase tracking-wider font-bold text-slate-400 bg-slate-800/50 px-2 py-1 rounded">Qt</span>
+<span class="text-[10px] uppercase tracking-wider font-bold text-slate-400 bg-slate-800/50 px-2 py-1 rounded">CMake</span>
 </div>
-<button class="text-slate-400 hover:text-white transition-colors">
-<span class="material-symbols-outlined">settings</span>
-</button>
+<h4 class="text-xl font-bold text-white mb-2">BlendViewer</h4>
+<p class="text-sm text-slate-400 line-clamp-2">A lightweight glTF model viewer built with Qt and OpenGL, designed for quick inspection and navigation of 3D assets.</p>
 </div>
-<!-- Scrollable Content -->
-<div class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-6">
-<!-- Import Action -->
+<div class="mt-6 flex items-center text-primary text-sm font-bold group-hover:translate-x-1 transition-transform">
+                                View Case Study <span class="material-symbols-outlined text-base ml-1">arrow_forward</span>
+</div>
+</div>
+</article>
+<article class="group relative flex flex-col h-full bg-slate-200 dark:bg-card-dark rounded-lg overflow-hidden border border-transparent dark:border-slate-800 hover:border-primary/50 transition-all duration-300">
+<div class="aspect-[4/3] w-full overflow-hidden bg-slate-800">
+<img alt="YouTube Video Downloader User Interface" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" data-alt="YouTube Video Downloader User Interface" src="assets/VideoDownloader.png"/>
+</div>
+<div class="p-6 flex flex-col justify-between flex-grow">
 <div>
-<button class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-all shadow-lg shadow-blue-900/20 active:scale-[0.98]">
-<span class="material-symbols-outlined">add</span>
-                        Import glTF Model
-                    </button>
-<p class="text-xs text-center text-slate-500 mt-2">Drag &amp; drop .glb or .gltf files</p>
+<div class="flex flex-wrap gap-2 mb-3">
+<span class="text-[10px] uppercase tracking-wider font-bold text-primary bg-primary/10 px-2 py-1 rounded">C#</span>
+<span class="text-[10px] uppercase tracking-wider font-bold text-slate-400 bg-slate-800/50 px-2 py-1 rounded">.NET</span>
+<span class="text-[10px] uppercase tracking-wider font-bold text-slate-400 bg-slate-800/50 px-2 py-1 rounded">YTDLP</span>
 </div>
-<!-- Camera Controls -->
-<div class="space-y-4">
-<div class="flex items-center justify-between">
-<h2 class="text-slate-300 text-xs font-bold uppercase tracking-wider">Camera Controls</h2>
-<button class="text-primary hover:text-blue-300 text-xs">Reset</button>
+<h4 class="text-xl font-bold text-white mb-2">YouTube Video Downloader</h4>
+<p class="text-sm text-slate-400 line-clamp-2">A C# application designed to download YouTube videos fast, efficiently and reliably. Providing a simple and quick way to save videos and/or audio.</p>
 </div>
-<!-- Sliders Group -->
-<div class="bg-panel-dark rounded-lg p-4 space-y-5 border border-border-dark">
-<!-- Rotation X -->
-<div class="space-y-2">
-<div class="flex justify-between items-center text-sm">
-<span class="text-slate-400">Rotation X</span>
-<span class="text-white font-mono text-xs bg-[#111a22] px-2 py-0.5 rounded border border-border-dark">45°</span>
-</div>
-<input class="w-full" max="360" min="0" type="range" value="45"/>
-</div>
-<!-- Rotation Y -->
-<div class="space-y-2">
-<div class="flex justify-between items-center text-sm">
-<span class="text-slate-400">Rotation Y</span>
-<span class="text-white font-mono text-xs bg-[#111a22] px-2 py-0.5 rounded border border-border-dark">128°</span>
-</div>
-<input class="w-full" max="360" min="0" type="range" value="128"/>
-</div>
-<!-- Distance / Zoom -->
-<div class="space-y-2">
-<div class="flex justify-between items-center text-sm">
-<span class="text-slate-400">Distance</span>
-<span class="text-white font-mono text-xs bg-[#111a22] px-2 py-0.5 rounded border border-border-dark">12m</span>
-</div>
-<input class="w-full" max="100" min="1" type="range" value="12"/>
+<div class="mt-6 flex items-center text-primary text-sm font-bold group-hover:translate-x-1 transition-transform">
+                                View Case Study <span class="material-symbols-outlined text-base ml-1">arrow_forward</span>
 </div>
 </div>
+</article>
+<article class="group relative flex flex-col h-full bg-slate-200 dark:bg-card-dark rounded-lg overflow-hidden border border-transparent dark:border-slate-800 hover:border-primary/50 transition-all duration-300">
+<div class="aspect-[4/3] w-full overflow-hidden bg-slate-800">
+<img alt="@Connect Website Home Page" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" data-alt="@Connect Website Home Page" src="assets/SocialMediaWebsite.png"/>
 </div>
-<!-- Preset Views -->
-<div class="space-y-3">
-<h2 class="text-slate-300 text-xs font-bold uppercase tracking-wider">Quick Views</h2>
-<div class="grid grid-cols-3 gap-2">
-<button class="bg-panel-dark hover:bg-[#253648] hover:border-primary/50 text-slate-300 hover:text-white border border-border-dark rounded p-2 text-xs font-medium transition-all flex flex-col items-center gap-1 group">
-<span class="material-symbols-outlined text-[18px] text-slate-500 group-hover:text-primary">arrow_upward</span>
-                            Top
-                        </button>
-<button class="bg-panel-dark hover:bg-[#253648] hover:border-primary/50 text-slate-300 hover:text-white border border-border-dark rounded p-2 text-xs font-medium transition-all flex flex-col items-center gap-1 group">
-<span class="material-symbols-outlined text-[18px] text-slate-500 group-hover:text-primary">arrow_downward</span>
-                            Bottom
-                        </button>
-<button class="bg-panel-dark hover:bg-[#253648] hover:border-primary/50 text-slate-300 hover:text-white border border-border-dark rounded p-2 text-xs font-medium transition-all flex flex-col items-center gap-1 group">
-<span class="material-symbols-outlined text-[18px] text-slate-500 group-hover:text-primary">view_in_ar</span>
-                            Persp
-                        </button>
-<button class="bg-panel-dark hover:bg-[#253648] hover:border-primary/50 text-slate-300 hover:text-white border border-border-dark rounded p-2 text-xs font-medium transition-all flex flex-col items-center gap-1 group">
-<span class="material-symbols-outlined text-[18px] text-slate-500 group-hover:text-primary">arrow_back</span>
-                            Left
-                        </button>
-<button class="bg-panel-dark hover:bg-[#253648] hover:border-primary/50 text-slate-300 hover:text-white border border-border-dark rounded p-2 text-xs font-medium transition-all flex flex-col items-center gap-1 group">
-<span class="material-symbols-outlined text-[18px] text-slate-500 group-hover:text-primary">deployed_code</span>
-                            Front
-                        </button>
-<button class="bg-panel-dark hover:bg-[#253648] hover:border-primary/50 text-slate-300 hover:text-white border border-border-dark rounded p-2 text-xs font-medium transition-all flex flex-col items-center gap-1 group">
-<span class="material-symbols-outlined text-[18px] text-slate-500 group-hover:text-primary">arrow_forward</span>
-                            Right
-                        </button>
+<div class="p-6 flex flex-col justify-between flex-grow">
+<div>
+<div class="flex flex-wrap gap-2 mb-3">
+<span class="text-[10px] uppercase tracking-wider font-bold text-primary bg-primary/10 px-2 py-1 rounded">PHP</span>
+<span class="text-[10px] uppercase tracking-wider font-bold text-slate-400 bg-slate-800/50 px-2 py-1 rounded">XAMPP</span>
+<span class="text-[10px] uppercase tracking-wider font-bold text-slate-400 bg-slate-800/50 px-2 py-1 rounded">HTML</span>
+<span class="text-[10px] uppercase tracking-wider font-bold text-slate-400 bg-slate-800/50 px-2 py-1 rounded">JavaScript</span>
+</div>
+<h4 class="text-xl font-bold text-white mb-2">Social Media Website</h4>
+<p class="text-sm text-slate-400 line-clamp-2">@Connect - Second Year FullStack Development Assignment - Complete Social Media Website for social networking.</p>
+</div>
+<div class="mt-6 flex items-center text-primary text-sm font-bold group-hover:translate-x-1 transition-transform">
+                                View Case Study <span class="material-symbols-outlined text-base ml-1">arrow_forward</span>
 </div>
 </div>
-<!-- Environment / Lighting (Extra for completeness) -->
-<div class="space-y-3">
-<div class="flex justify-between items-center">
-<h2 class="text-slate-300 text-xs font-bold uppercase tracking-wider">Environment</h2>
-<div class="flex items-center gap-2">
-<span class="w-2 h-2 rounded-full bg-primary"></span>
-<span class="text-[10px] text-slate-400">STUDIO</span>
+</article>
+<article class="group relative flex flex-col h-full bg-slate-200 dark:bg-card-dark rounded-lg overflow-hidden border border-transparent dark:border-slate-800 hover:border-primary/50 transition-all duration-300">
+<div class="aspect-[4/3] w-full overflow-hidden bg-slate-800">
+<img alt="Digital blockchain visualization nodes" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" data-alt="Digital blockchain visualization nodes" src="assets/MatrixCalculator.png"/>
+</div>
+<div class="p-6 flex flex-col justify-between flex-grow">
+<div>
+<div class="flex flex-wrap gap-2 mb-3">
+<span class="text-[10px] uppercase tracking-wider font-bold text-primary bg-primary/10 px-2 py-1 rounded">Python</span>
+<span class="text-[10px] uppercase tracking-wider font-bold text-slate-400 bg-slate-800/50 px-2 py-1 rounded">CustomTKinter</span>
+</div>
+<h4 class="text-xl font-bold text-white mb-2">Matrix Calculator</h4>
+<p class="text-sm text-slate-400 line-clamp-2">A Python application created to perform matrix operations within a graphical user interface.</p>
+</div>
+<div class="mt-6 flex items-center text-primary text-sm font-bold group-hover:translate-x-1 transition-transform">
+                                View Case Study <span class="material-symbols-outlined text-base ml-1">arrow_forward</span>
 </div>
 </div>
-<div class="bg-panel-dark rounded-lg p-3 border border-border-dark flex items-center gap-3">
-<div class="bg-gradient-to-br from-slate-700 to-black w-10 h-10 rounded shadow-inner" data-alt="Dark abstract gradient representing lighting environment"></div>
-<div class="flex-1">
-<div class="text-xs text-white mb-1">Studio Soft</div>
-<div class="w-full bg-[#111a22] h-1.5 rounded-full overflow-hidden">
-<div class="bg-slate-500 w-3/4 h-full"></div>
+</article>
+<article class="group relative flex flex-col h-full bg-slate-200 dark:bg-card-dark rounded-lg overflow-hidden border border-transparent dark:border-slate-800 hover:border-primary/50 transition-all duration-300">
+<div class="aspect-[4/3] w-full overflow-hidden bg-slate-800">
+<img alt="FireStack Code Example" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" data-alt="FireStack Code Example" src="assets/FireStack.png"/>
+</div>
+<div class="p-6 flex flex-col justify-between flex-grow">
+<div>
+<div class="flex flex-wrap gap-2 mb-3">
+<span class="text-[10px] uppercase tracking-wider font-bold text-primary bg-primary/10 px-2 py-1 rounded">C++</span>
+<span class="text-[10px] uppercase tracking-wider font-bold text-slate-400 bg-slate-800/50 px-2 py-1 rounded">CMake</span>
+</div>
+<h4 class="text-xl font-bold text-white mb-2">FireStack</h4>
+<p class="text-sm text-slate-400 line-clamp-2">Personal Application Framework for creating interesting projects in C++. Lead to the creation of BlendViewer</p>
+</div>
+<div class="mt-6 flex items-center text-primary text-sm font-bold group-hover:translate-x-1 transition-transform">
+                                View Case Study <span class="material-symbols-outlined text-base ml-1">arrow_forward</span>
 </div>
 </div>
+</article>
+<article class="group relative flex flex-col h-full bg-slate-200 dark:bg-card-dark rounded-lg overflow-hidden border border-transparent dark:border-slate-800 hover:border-primary/50 transition-all duration-300">
+<div class="aspect-[4/3] w-full overflow-hidden bg-slate-800">
+<img alt="Python Video Downloader terminal and UI" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" data-alt="Python Video Downloader terminal and UI" src="assets/PythonVideoDownloader.png"/>
+</div>
+<div class="p-6 flex flex-col justify-between flex-grow">
+<div>
+<div class="flex flex-wrap gap-2 mb-3">
+<span class="text-[10px] uppercase tracking-wider font-bold text-primary bg-primary/10 px-2 py-1 rounded">Python</span>
+<span class="text-[10px] uppercase tracking-wider font-bold text-slate-400 bg-slate-800/50 px-2 py-1 rounded">CustomTKinter</span>
+</div>
+<h4 class="text-xl font-bold text-white mb-2">Python Video Test Downloader</h4>
+<p class="text-sm text-slate-400 line-clamp-2">Inspired my C# App, initially developed in python as a UI + terminal interface.</p>
+</div>
+<div class="mt-6 flex items-center text-primary text-sm font-bold group-hover:translate-x-1 transition-transform">
+                                View Case Study <span class="material-symbols-outlined text-base ml-1">arrow_forward</span>
 </div>
 </div>
-</div>
-<!-- Footer: Camera Speed -->
-<div class="p-4 border-t border-border-dark bg-[#0d141b] space-y-2">
-<div class="flex justify-between items-center text-xs text-slate-400 mb-1">
-<div class="flex items-center gap-1.5">
-<span class="material-symbols-outlined text-[16px]">speed</span>
-<span>Camera Speed</span>
-</div>
-<span>1.5x</span>
-</div>
-<input class="w-full" max="5" min="0.1" step="0.1" type="range" value="1.5"/>
-</div>
-</aside>
-<!-- Main Viewport -->
-<main class="flex-1 relative bg-background-dark overflow-hidden flex flex-col">
-<!-- 3D Canvas Area -->
-<div class="absolute inset-0 z-0 bg-gradient-to-b from-[#1a202c] to-[#0a0e14]">
-<!-- Grid Helper -->
-<div class="absolute inset-x-0 bottom-0 h-[60%] viewport-grid opacity-30 pointer-events-none transform perspective-[1000px] rotate-x-60 origin-bottom"></div>
-<!-- Placeholder Model Indicator -->
-<div class="absolute inset-0 flex flex-col items-center justify-center text-slate-600 pointer-events-none select-none">
-<div class="w-24 h-24 border-2 border-dashed border-slate-700 rounded-xl flex items-center justify-center mb-4 opacity-50">
-<span class="material-symbols-outlined text-4xl">view_in_ar</span>
-</div>
-<p class="text-lg font-medium text-slate-500">No model loaded</p>
-<p class="text-sm text-slate-600">Drag &amp; drop a .gltf or .glb file anywhere</p>
-</div>
-</div>
-<!-- Top Overlay Controls -->
-<div class="relative z-10 p-4 flex justify-between items-start pointer-events-none">
-<!-- Left: Viewport Info -->
-<div class="flex gap-2 pointer-events-auto">
-<div class="bg-black/40 backdrop-blur-md border border-white/10 rounded px-3 py-1.5 flex items-center gap-2">
-<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-<span class="text-xs text-slate-300 font-mono">Ready</span>
-</div>
-<div class="bg-black/40 backdrop-blur-md border border-white/10 rounded px-3 py-1.5 flex items-center gap-2">
-<span class="material-symbols-outlined text-[14px] text-slate-400">grid_4x4</span>
-<span class="text-xs text-slate-300 font-mono">Grid: On</span>
-</div>
-</div>
-<!-- Right: Gizmo Placeholder & Tools -->
-<div class="flex flex-col gap-3 items-end pointer-events-auto">
-<!-- Gizmo Representation -->
-<div class="w-12 h-12 relative group cursor-pointer">
-<div class="absolute inset-0 bg-white/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<!-- Simple CSS Gizmo representation -->
-<div class="absolute top-1/2 left-1/2 w-8 h-[2px] bg-red-500 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div> <!-- X -->
-<div class="absolute top-1/2 left-1/2 w-[2px] h-8 bg-green-500 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div> <!-- Y -->
-<div class="absolute top-1/2 left-1/2 w-4 h-4 rounded-full border-2 border-blue-500 transform -translate-x-1/2 -translate-y-1/2"></div> <!-- Z -->
-<span class="absolute -top-1 right-0 text-[8px] font-bold text-slate-400">Y</span>
-<span class="absolute bottom-1 -right-1 text-[8px] font-bold text-slate-400">X</span>
-</div>
-<!-- Floating Toolbar -->
-<div class="bg-sidebar-dark/90 backdrop-blur-md border border-border-dark rounded-lg flex flex-col p-1 shadow-lg">
-<button class="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded transition-colors" title="Select">
-<span class="material-symbols-outlined text-[20px]">near_me</span>
-</button>
-<button class="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded transition-colors" title="Move">
-<span class="material-symbols-outlined text-[20px]">open_with</span>
-</button>
-<button class="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded transition-colors" title="Rotate">
-<span class="material-symbols-outlined text-[20px]">cached</span>
-</button>
-<button class="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded transition-colors" title="Scale">
-<span class="material-symbols-outlined text-[20px]">aspect_ratio</span>
-</button>
-<div class="h-[1px] bg-white/10 my-1 mx-2"></div>
-<button class="p-2 text-primary hover:text-white hover:bg-primary/20 rounded transition-colors" title="Wireframe Mode">
-<span class="material-symbols-outlined text-[20px]">grid_on</span>
-</button>
-</div>
-</div>
-</div>
-<!-- Bottom Status Bar -->
-<div class="relative z-10 mt-auto bg-sidebar-dark/95 backdrop-blur border-t border-border-dark p-2 px-4 flex justify-between items-center text-xs text-slate-400">
-<div class="flex items-center gap-6">
-<span class="flex items-center gap-1.5 hover:text-white cursor-help">
-<span class="material-symbols-outlined text-[14px]">category</span>
-<span>0 Meshes</span>
-</span>
-<span class="flex items-center gap-1.5 hover:text-white cursor-help">
-<span class="material-symbols-outlined text-[14px]">polyline</span>
-<span>0 Vertices</span>
-</span>
-<span class="flex items-center gap-1.5 hover:text-white cursor-help">
-<span class="material-symbols-outlined text-[14px]">texture</span>
-<span>0 Materials</span>
-</span>
-</div>
-<div class="flex items-center gap-4">
-<span class="font-mono">FPS: --</span>
-<div class="h-3 w-[1px] bg-border-dark"></div>
-<span>WebGL 2.0</span>
+</article>
 </div>
 </div>
 </main>
+<footer class="mt-32 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 dark:text-slate-400">
+<div class="mb-4 md:mb-0">
+                © 2026 Maximus Bergmann. Engineered in <span class="text-slate-900 dark:text-white">Johannesburg</span>.
+            </div>
+<div class="flex gap-8">
+<a class="hover:text-primary transition-colors flex items-center gap-2" href="https://github.com/Chester-xx">
+<span class="material-symbols-outlined text-[18px]">code</span> GitHub
+                </a>
+<a class="hover:text-primary transition-colors flex items-center gap-2" href="https://www.linkedin.com/in/maximusbergmann/">
+<span class="material-symbols-outlined text-[18px]">work</span> LinkedIn
+                </a>
+<a class="hover:text-primary transition-colors flex items-center gap-2" href="mailto:business.mmbergmann@gmail.com">
+<span class="material-symbols-outlined text-[18px]">mail</span> Email
+                </a>
 </div>
+</footer>
+</div>
+
 </body></html>
