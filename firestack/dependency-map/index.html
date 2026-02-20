@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FireStack — Dependency Map</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;700;800&display=swap');
+
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --border: #1e2230;
+    --accent-cyan: #00e5ff;
+    --accent-amber: #ffb300;
+    --accent-rose: #ff4d6d;
+    --accent-green: #00e676;
+    --accent-purple: #b388ff;
+    --accent-blue: #448aff;
+    --text: #e0e6f0;
+    --text-dim: #5a6480;
+    --node-bg: #151822;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px;
+    background: rgba(10,12,16,0.92);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+  }
+
+  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; letter-spacing: 0.05em; color: var(--accent-amber); }
+  .logo span { color: var(--text-dim); font-weight: 400; font-size: 13px; margin-left: 10px; }
+
+  .legend { display: flex; gap: 16px; align-items: center; }
+  .leg-item { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--text-dim); }
+  .leg-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid currentColor; }
+
+  .controls { display: flex; gap: 8px; }
+  .ctrl-btn {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text-dim); font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; padding: 5px 12px; border-radius: 4px; cursor: pointer; transition: all 0.15s;
+  }
+  .ctrl-btn:hover { border-color: var(--accent-amber); color: var(--accent-amber); }
+
+  #canvas-wrap { position: absolute; inset: 0; top: 49px; overflow: hidden; cursor: grab; }
+  #canvas-wrap:active { cursor: grabbing; }
+  #graph-canvas { position: absolute; top: 0; left: 0; pointer-events: none; }
+  #nodes-layer  { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+
+  .node {
+    position: absolute; background: var(--node-bg); border-radius: 8px;
+    padding: 12px 16px; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+    min-width: 155px; transform: translate(-50%, -50%);
+  }
+  .node:hover  { transform: translate(-50%, -50%) scale(1.04); }
+  .node.active { transform: translate(-50%, -50%) scale(1.06); }
+
+  .node-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .node-icon   { font-size: 14px; line-height: 1; }
+  .node-title  { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.03em; }
+  .node-sub    { font-size: 9px; color: var(--text-dim); line-height: 1.5; margin-top: 2px; }
+  .node-tag    { display: inline-block; font-size: 8px; padding: 2px 6px; border-radius: 3px; margin-top: 6px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  .layer-app     { border: 1.5px solid var(--accent-cyan);   box-shadow: 0 0 18px rgba(0,229,255,0.10); }
+  .layer-app     .node-title { color: var(--accent-cyan); }
+  .layer-app     .node-tag   { background: rgba(0,229,255,0.12); color: var(--accent-cyan); }
+
+  .layer-ui      { border: 1.5px solid var(--accent-purple); box-shadow: 0 0 18px rgba(179,136,255,0.10); }
+  .layer-ui      .node-title { color: var(--accent-purple); }
+  .layer-ui      .node-tag   { background: rgba(179,136,255,0.12); color: var(--accent-purple); }
+
+  .layer-core    { border: 1.5px solid var(--accent-amber);  box-shadow: 0 0 18px rgba(255,179,0,0.10); }
+  .layer-core    .node-title { color: var(--accent-amber); }
+  .layer-core    .node-tag   { background: rgba(255,179,0,0.12); color: var(--accent-amber); }
+
+  .layer-container { border: 1.5px solid var(--accent-green); box-shadow: 0 0 18px rgba(0,230,118,0.10); }
+  .layer-container .node-title { color: var(--accent-green); }
+  .layer-container .node-tag   { background: rgba(0,230,118,0.12); color: var(--accent-green); }
+
+  .layer-build   { border: 1.5px solid var(--accent-rose);   box-shadow: 0 0 18px rgba(255,77,109,0.10); }
+  .layer-build   .node-title { color: var(--accent-rose); }
+  .layer-build   .node-tag   { background: rgba(255,77,109,0.12); color: var(--accent-rose); }
+
+  .layer-system  { border: 1.5px solid var(--accent-blue);   box-shadow: 0 0 18px rgba(68,138,255,0.10); }
+  .layer-system  .node-title { color: var(--accent-blue); }
+  .layer-system  .node-tag   { background: rgba(68,138,255,0.12); color: var(--accent-blue); }
+
+  #info-panel {
+    position: fixed; bottom: 24px; right: 24px; width: 290px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px;
+    transition: opacity 0.2s, transform 0.2s; z-index: 200;
+    opacity: 0; transform: translateY(8px); pointer-events: none;
+  }
+  #info-panel.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
+  #info-panel h3 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; margin-bottom: 8px; }
+  #info-panel p  { font-size: 10px; color: var(--text-dim); line-height: 1.7; }
+  #info-panel .deps-list { margin-top: 10px; font-size: 9px; color: var(--text-dim); }
+  #info-panel .deps-list span { display: inline-block; padding: 2px 7px; background: var(--border); border-radius: 3px; margin: 2px 2px 0 0; }
+
+  #hint { position: fixed; bottom: 24px; left: 24px; font-size: 10px; color: var(--text-dim); line-height: 1.8; }
+</style>
+</head>
+<body>
+
+<header>
+  <div><span class="logo">FireStack <span>— Architecture Dependency Map</span></span></div>
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-cyan)"></div> Apps</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-purple)"></div> UI Module</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-amber)"></div> Core Module</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-green)"></div> Container Module</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-rose)"></div> Build System</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-blue)"></div> Toolchain / IDE</div>
+  </div>
+  <div class="controls">
+    <button class="ctrl-btn" onclick="resetView()">↺ Reset</button>
+    <button class="ctrl-btn" onclick="zoomIn()">+ Zoom</button>
+    <button class="ctrl-btn" onclick="zoomOut()">− Zoom</button>
+  </div>
+</header>
+
+<div id="canvas-wrap">
+  <canvas id="graph-canvas"></canvas>
+  <div id="nodes-layer"></div>
+</div>
+
+<div id="info-panel">
+  <h3 id="ip-title">—</h3>
+  <p id="ip-desc">—</p>
+  <div class="deps-list" id="ip-deps"></div>
+</div>
+
+<div id="hint"></div>
+
+<script>
+const nodes = [
+
+  // ── Apps (Entry Points) ──────────────────────────────────────────────────
+  { id: 'app1', x: 300, y: 100, layer: 'app', icon: '⚡', title: 'app1',
+    sub: 'Sandbox entry point\nmain.cpp scratch app', tag: 'C++ App',
+    desc: 'apps/app1/main.cpp — general-purpose sandbox application. Used to prototype and test FireStack library features during development. Links against the firestack_core static library and has access to all include/ headers.',
+    deps: ['firestack_core', 'core_h', 'container_h', 'ui_h'] },
+
+  { id: 'blendviewer', x: 700, y: 100, layer: 'app', icon: '🎲', title: 'BlendViewer',
+    sub: 'apps/BlendViewer/main.cpp\nglTF 3D viewer app', tag: 'C++ App',
+    desc: 'apps/BlendViewer/main.cpp — the flagship app currently in development. A standalone C++ application for loading and displaying .glTF files exported from Blender. Migrated out of the old FireStack codebase into its own app within the framework. Links against firestack_core.',
+    deps: ['firestack_core', 'core_h'] },
+
+  // ── Umbrella Headers ─────────────────────────────────────────────────────
+  { id: 'core_h', x: 300, y: 280, layer: 'core', icon: '📋', title: 'core.h',
+    sub: 'include/core.h\nUmbrella for core module', tag: 'Header',
+    desc: 'Top-level umbrella header for the core module. Including this single header pulls in both logging.h and math.h, giving consumers access to the full core module without needing to list individual headers.',
+    deps: ['logging_h', 'math_h'] },
+
+  { id: 'container_h', x: 700, y: 280, layer: 'container', icon: '📋', title: 'container.h',
+    sub: 'include/container.h\nUmbrella for containers', tag: 'Header',
+    desc: 'Top-level umbrella header for the container module. Including this pulls in both SLinkedList.h and DLinkedList.h, providing access to all custom data structure implementations.',
+    deps: ['slinkedlist_h', 'dlinkedlist_h'] },
+
+  { id: 'ui_h', x: 1100, y: 280, layer: 'ui', icon: '📋', title: 'ui_base.h',
+    sub: 'include/ui/ui_base.h\nBase class for all UI', tag: 'Header',
+    desc: 'Base header for the UI module. Defines the abstract or base class that all UI components (Window, Button, Input, Label, Textbox) inherit from. Establishes the common interface contract for the UI layer.',
+    deps: ['window_h', 'button_h', 'input_h', 'label_h', 'textbox_h'] },
+
+  // ── Core Module Headers ──────────────────────────────────────────────────
+  { id: 'logging_h', x: 140, y: 470, layer: 'core', icon: '📝', title: 'logging.h',
+    sub: 'include/core/logging.h\nLog macros & levels', tag: 'Core Header',
+    desc: 'Declares the logging interface for FireStack. Provides log level definitions (INFO, WARN, ERROR, DEBUG) and logging macros/functions for structured console output. Used across the framework and apps for runtime diagnostics and debug output.',
+    deps: ['logging_cpp'] },
+
+  { id: 'math_h', x: 340, y: 470, layer: 'core', icon: '🔢', title: 'math.h',
+    sub: 'include/core/math.h\nMath utilities & helpers', tag: 'Core Header',
+    desc: 'Declares math utilities for FireStack. Provides helper functions and types for common mathematical operations needed by framework components — likely including vector/scalar helpers, clamping, interpolation, and other primitives useful for future rendering work.',
+    deps: ['math_cpp'] },
+
+  // ── Container Module Headers ─────────────────────────────────────────────
+  { id: 'slinkedlist_h', x: 570, y: 470, layer: 'container', icon: '🔗', title: 'SLinkedList.h',
+    sub: 'include/container/SLinkedList.h\nSingly linked list', tag: 'Container Header',
+    desc: 'Declares the templated singly linked list data structure. Each node holds a value and a single next pointer. Provides operations such as push_front, push_back, pop, find, and traversal. Implemented without any standard library containers.',
+    deps: ['slinkedlist_cpp'] },
+
+  { id: 'dlinkedlist_h', x: 780, y: 470, layer: 'container', icon: '🔗', title: 'DLinkedList.h',
+    sub: 'include/container/DLinkedList.h\nDoubly linked list', tag: 'Container Header',
+    desc: 'Declares the templated doubly linked list data structure. Each node holds prev and next pointers enabling bidirectional traversal. Provides push, pop, insert, remove, and iteration operations. Serves as the richer alternative to SLinkedList when reverse traversal is needed.',
+    deps: ['dlinkedlist_cpp'] },
+
+  // ── UI Module Headers ────────────────────────────────────────────────────
+  { id: 'window_h', x: 960, y: 470, layer: 'ui', icon: '🪟', title: 'window.h',
+    sub: 'include/ui/window.h\nTop-level window', tag: 'UI Header',
+    desc: 'Declares the Window class — the top-level UI container. Owns the main application surface and hosts child components. Inherits from ui_base and is the root of the widget hierarchy for any FireStack UI application.',
+    deps: ['window_cpp'] },
+
+  { id: 'button_h', x: 1060, y: 470, layer: 'ui', icon: '🔘', title: 'button.h',
+    sub: 'include/ui/button.h\nClickable control', tag: 'UI Header',
+    desc: 'Declares the Button UI component. Inherits from ui_base. Handles click events and visual state (normal, hovered, pressed). Designed to be placed within a Window and bound to callback logic in the consuming application.',
+    deps: ['button_cpp'] },
+
+  { id: 'input_h', x: 1160, y: 470, layer: 'ui', icon: '⌨️', title: 'input.h',
+    sub: 'include/ui/input.h\nText input control', tag: 'UI Header',
+    desc: 'Declares the Input UI component. Inherits from ui_base. Provides a text input field for capturing keyboard entry from the user. Exposes accessors for the current input string and supports clear/reset.',
+    deps: ['input_cpp'] },
+
+  { id: 'label_h', x: 1260, y: 470, layer: 'ui', icon: '🏷', title: 'label.h',
+    sub: 'include/ui/label.h\nStatic text display', tag: 'UI Header',
+    desc: 'Declares the Label UI component. Inherits from ui_base. Renders a static or dynamically updated text string within the window. Used for headings, status messages, and field annotations.',
+    deps: ['label_cpp'] },
+
+  { id: 'textbox_h', x: 1360, y: 470, layer: 'ui', icon: '📄', title: 'textbox.h',
+    sub: 'include/ui/textbox.h\nMulti-line text area', tag: 'UI Header',
+    desc: 'Declares the Textbox UI component. Inherits from ui_base. A multi-line text area for displaying or editing larger bodies of text. Differentiated from Input by supporting wrapping, scrolling, and multi-line content.',
+    deps: ['textbox_cpp'] },
+
+  // ── Source Implementations ───────────────────────────────────────────────
+  { id: 'logging_cpp', x: 140, y: 660, layer: 'core', icon: '⚙️', title: 'logging.cpp',
+    sub: 'src/core/logging.cpp\nLog implementation', tag: 'C++ Source',
+    desc: 'Implementation of the logging system declared in logging.h. Defines the actual output formatting, log level filtering, timestamp injection, and console/stream write operations. Compiled into the firestack_core static library.',
+    deps: ['firestack_core'] },
+
+  { id: 'math_cpp', x: 340, y: 660, layer: 'core', icon: '⚙️', title: 'math.cpp',
+    sub: 'src/core/math.cpp\nMath implementation', tag: 'C++ Source',
+    desc: 'Implementation of math utilities declared in math.h. Defines the bodies of all math helper functions. Compiled into the firestack_core static library and linked by any app or module that includes math.h.',
+    deps: ['firestack_core'] },
+
+  { id: 'slinkedlist_cpp', x: 570, y: 660, layer: 'container', icon: '⚙️', title: 'SLinkedList.cpp',
+    sub: 'src/container/SLinkedList.cpp\nSingly linked list impl', tag: 'C++ Source',
+    desc: 'Implementation file for the singly linked list declared in SLinkedList.h. Defines node allocation, pointer wiring for push/pop/remove operations, and list traversal. Compiled into firestack_core.',
+    deps: ['firestack_core'] },
+
+  { id: 'dlinkedlist_cpp', x: 780, y: 660, layer: 'container', icon: '⚙️', title: 'DLinkedList.cpp',
+    sub: 'src/container/DLinkedList.cpp\nDoubly linked list impl', tag: 'C++ Source',
+    desc: 'Implementation file for the doubly linked list declared in DLinkedList.h. Defines bidirectional node linking, insertion, removal, and traversal in both directions. Compiled into firestack_core.',
+    deps: ['firestack_core'] },
+
+  { id: 'ui_base_cpp', x: 960, y: 660, layer: 'ui', icon: '⚙️', title: 'ui_base.cpp',
+    sub: 'src/ui/ui_base.cpp\nBase UI implementation', tag: 'C++ Source',
+    desc: 'Implementation of the ui_base class. Defines shared behaviour inherited by all UI components — common constructor logic, lifecycle hooks, and any shared rendering or event-dispatch plumbing that all widgets rely on.',
+    deps: ['firestack_core'] },
+
+  { id: 'window_cpp', x: 1060, y: 660, layer: 'ui', icon: '⚙️', title: 'window.cpp',
+    sub: 'src/ui/window.cpp', tag: 'C++ Source',
+    desc: 'Implementation of the Window class. Manages the top-level surface, child component layout, and the main event loop integration point for the UI system.',
+    deps: ['firestack_core'] },
+
+  { id: 'button_cpp', x: 1160, y: 660, layer: 'ui', icon: '⚙️', title: 'button.cpp',
+    sub: 'src/ui/button.cpp', tag: 'C++ Source',
+    desc: 'Implementation of the Button component. Handles hit-testing, state transitions, and callback invocation on click events.',
+    deps: ['firestack_core'] },
+
+  { id: 'input_cpp', x: 1260, y: 660, layer: 'ui', icon: '⚙️', title: 'input.cpp',
+    sub: 'src/ui/input.cpp', tag: 'C++ Source',
+    desc: 'Implementation of the Input component. Manages character buffer, cursor position, keyboard event handling, and string accessor.',
+    deps: ['firestack_core'] },
+
+  { id: 'label_cpp', x: 1360, y: 660, layer: 'ui', icon: '⚙️', title: 'label.cpp',
+    sub: 'src/ui/label.cpp', tag: 'C++ Source',
+    desc: 'Implementation of the Label component. Handles text rendering and dynamic string updates.',
+    deps: ['firestack_core'] },
+
+  { id: 'textbox_cpp', x: 1460, y: 660, layer: 'ui', icon: '⚙️', title: 'textbox.cpp',
+    sub: 'src/ui/textbox.cpp', tag: 'C++ Source',
+    desc: 'Implementation of the Textbox component. Handles multi-line text layout, scrolling, and content management.',
+    deps: ['firestack_core'] },
+
+  // ── Static Library Output ────────────────────────────────────────────────
+  { id: 'firestack_core', x: 800, y: 860, layer: 'build', icon: '📦', title: 'firestack_core',
+    sub: 'Static library target\nAll src/ compiled into .lib', tag: 'CMake Target',
+    desc: 'The core CMake static library target defined in src/CMakeLists.txt. All .cpp files in src/container/, src/core/, and src/ui/ are compiled into this single library. Both app1 and BlendViewer link against it. Built to out/build/debug/ or out/build/x64-Debug/ by Ninja.',
+    deps: ['cmake', 'mingw32', 'ninja'] },
+
+  // ── Build System ─────────────────────────────────────────────────────────
+  { id: 'cmake', x: 500, y: 1040, layer: 'build', icon: '⚒️', title: 'CMake',
+    sub: 'CMakeLists.txt (root + sub)\nCMakePresets.json config', tag: 'Build System',
+    desc: 'CMake orchestrates the entire build. The root CMakeLists.txt defines the project, adds subdirectories (src/, apps/), and configures include paths. CMakePresets.json and CMakeUserPresets.json define named configure/build presets (debug, x64-Debug). apps/ and src/ each have their own CMakeLists.txt.',
+    deps: ['ninja', 'mingw32'] },
+
+  { id: 'ninja', x: 800, y: 1040, layer: 'build', icon: '⚡', title: 'Ninja',
+    sub: 'build.ninja generated\nFast incremental builds', tag: 'Build Backend',
+    desc: 'Ninja is the CMake build backend used for both the debug and x64-Debug presets. CMake generates build.ninja in out/build/. Ninja executes the minimal set of compile and link steps needed on each incremental build — significantly faster than MSBuild for large C++ projects.',
+    deps: [] },
+
+  { id: 'mingw32', x: 1100, y: 1040, layer: 'system', icon: '🔧', title: 'MinGW32',
+    sub: 'g++.exe · ar.exe\nC++17/20 toolchain', tag: 'Compiler',
+    desc: 'MinGW32 compiler toolchain (migrated from MSVC). g++.exe compiles .cpp files to .obj, ar.exe produces the static library. Configured via CMake\'s CMakeCXXCompiler.cmake.',
+    deps: [] },
+
+  { id: 'VS Code', x: 1350, y: 1040, layer: 'system', icon: '🖥', title: 'VS Code',
+    sub: 'IDE · CMake integration\nDoxygen · Copilot indices', tag: 'IDE',
+    desc: 'VS Code is the development IDE. Opens FireStack as a CMake project (not a .sln). The .vs/ folder contains VS workspace state, Copilot semantic indices (CodeChunks.db, SemanticSymbols.db), file content index, and precompiled header cache (MAIN.ipch). Doxygen comment formatting is used manually for documentation.',
+    deps: ['cmake', 'mingw32'] },
+
+  { id: 'doxygen', x: 1350, y: 860, layer: 'system', icon: '📚', title: 'Doxygen',
+    sub: 'Manual comment formatting\nDox-style doc headers', tag: 'Documentation',
+    desc: 'Doxygen-style comment formatting is used manually across the codebase headers. Provides structured /** @brief, @param, @return */ annotations that can be processed into HTML or PDF documentation. Not automated in the build pipeline — applied by hand during development.',
+    deps: [] },
+
+];
+
+const edges = [
+  // Apps → umbrella headers
+  { from: 'app1',          to: 'core_h' },
+  { from: 'app1',          to: 'container_h' },
+  { from: 'app1',          to: 'ui_h' },
+  { from: 'app1',          to: 'firestack_core' },
+  { from: 'blendviewer',   to: 'core_h' },
+  { from: 'blendviewer',   to: 'firestack_core' },
+
+  // Umbrella headers → individual headers
+  { from: 'core_h',        to: 'logging_h' },
+  { from: 'core_h',        to: 'math_h' },
+  { from: 'container_h',   to: 'slinkedlist_h' },
+  { from: 'container_h',   to: 'dlinkedlist_h' },
+  { from: 'ui_h',          to: 'window_h' },
+  { from: 'ui_h',          to: 'button_h' },
+  { from: 'ui_h',          to: 'input_h' },
+  { from: 'ui_h',          to: 'label_h' },
+  { from: 'ui_h',          to: 'textbox_h' },
+
+  // Headers → their .cpp implementations
+  { from: 'logging_h',     to: 'logging_cpp' },
+  { from: 'math_h',        to: 'math_cpp' },
+  { from: 'slinkedlist_h', to: 'slinkedlist_cpp' },
+  { from: 'dlinkedlist_h', to: 'dlinkedlist_cpp' },
+  { from: 'window_h',      to: 'window_cpp' },
+  { from: 'button_h',      to: 'button_cpp' },
+  { from: 'input_h',       to: 'input_cpp' },
+  { from: 'label_h',       to: 'label_cpp' },
+  { from: 'textbox_h',     to: 'textbox_cpp' },
+  { from: 'ui_h',          to: 'ui_base_cpp' },
+
+  // All .cpp → firestack_core (compiled into the lib)
+  { from: 'logging_cpp',    to: 'firestack_core' },
+  { from: 'math_cpp',       to: 'firestack_core' },
+  { from: 'slinkedlist_cpp',to: 'firestack_core' },
+  { from: 'dlinkedlist_cpp',to: 'firestack_core' },
+  { from: 'ui_base_cpp',    to: 'firestack_core' },
+  { from: 'window_cpp',     to: 'firestack_core' },
+  { from: 'button_cpp',     to: 'firestack_core' },
+  { from: 'input_cpp',      to: 'firestack_core' },
+  { from: 'label_cpp',      to: 'firestack_core' },
+  { from: 'textbox_cpp',    to: 'firestack_core' },
+
+  // Build chain
+  { from: 'firestack_core', to: 'cmake' },
+  { from: 'cmake',          to: 'ninja' },
+  { from: 'cmake',          to: 'mingw32' },
+  { from: 'VS Code',         to: 'cmake' },
+  { from: 'VS Code',         to: 'mingw32' },
+  { from: 'doxygen',        to: 'core_h' },
+  { from: 'doxygen',        to: 'container_h' },
+  { from: 'doxygen',        to: 'ui_h' },
+];
+
+// ─── Viewport — graph spans x:140–1460, y:100–1040. Centre ≈ (800, 570) ────
+const GRAPH_CX = 800;
+const GRAPH_CY = 570;
+let scale = 1;
+let offsetX = window.innerWidth  / 2 - GRAPH_CX;
+let offsetY = window.innerHeight / 2 - GRAPH_CY;
+let isDragging = false, dragStart = { x: 0, y: 0 };
+let activeNode = null;
+
+const wrap       = document.getElementById('canvas-wrap');
+const canvas     = document.getElementById('graph-canvas');
+const ctx        = canvas.getContext('2d');
+const nodesLayer = document.getElementById('nodes-layer');
+const infoPanel  = document.getElementById('info-panel');
+
+const layerColors = {
+  app: '#00e5ff', ui: '#b388ff', core: '#ffb300',
+  container: '#00e676', build: '#ff4d6d', system: '#448aff'
+};
+
+// ─── Build DOM nodes ──────────────────────────────────────────────────────────
+const nodeMap = {};
+nodes.forEach(n => {
+  const el = document.createElement('div');
+  el.className = `node layer-${n.layer}`;
+  el.id = 'n_' + n.id;
+  el.style.left = n.x + 'px';
+  el.style.top  = n.y + 'px';
+  el.innerHTML = `
+    <div class="node-header">
+      <span class="node-icon">${n.icon}</span>
+      <span class="node-title">${n.title}</span>
+    </div>
+    <div class="node-sub">${n.sub}</div>
+    <span class="node-tag">${n.tag}</span>
+  `;
+  el.addEventListener('click', e => { e.stopPropagation(); selectNode(n); });
+  nodesLayer.appendChild(el);
+  nodeMap[n.id] = { data: n, el };
+});
+
+// ─── Canvas ───────────────────────────────────────────────────────────────────
+function resizeCanvas() {
+  canvas.width  = wrap.clientWidth;
+  canvas.height = wrap.clientHeight;
+  drawEdges();
+}
+window.addEventListener('resize', resizeCanvas);
+
+function worldToScreen(x, y) {
+  return { x: x * scale + offsetX, y: y * scale + offsetY };
+}
+
+function drawEdges() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  edges.forEach(e => {
+    const a  = nodeMap[e.from].data;
+    const b  = nodeMap[e.to].data;
+    const as = worldToScreen(a.x, a.y);
+    const bs = worldToScreen(b.x, b.y);
+
+    const highlight = activeNode && (e.from === activeNode || e.to === activeNode);
+    const color     = highlight ? layerColors[nodeMap[e.from].data.layer] : '#1e2230';
+    const alpha     = highlight ? 0.9 : 0.6;
+
+    ctx.beginPath();
+    ctx.moveTo(as.x, as.y);
+    const cpY = (as.y + bs.y) / 2;
+    ctx.bezierCurveTo(as.x, cpY, bs.x, cpY, bs.x, bs.y);
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = alpha;
+    ctx.lineWidth   = highlight ? 2 : 1;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    const angle = Math.atan2(bs.y - cpY, 0) + Math.PI / 2;
+    const aSize = highlight ? 6 : 4;
+    ctx.beginPath();
+    ctx.moveTo(bs.x, bs.y);
+    ctx.lineTo(bs.x - aSize * Math.cos(angle - Math.PI/6), bs.y - aSize * Math.sin(angle - Math.PI/6));
+    ctx.lineTo(bs.x - aSize * Math.cos(angle + Math.PI/6), bs.y - aSize * Math.sin(angle + Math.PI/6));
+    ctx.closePath();
+    ctx.fillStyle   = color;
+    ctx.globalAlpha = alpha;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  });
+}
+
+function applyTransform() {
+  nodesLayer.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+  drawEdges();
+}
+
+// ─── Pan ──────────────────────────────────────────────────────────────────────
+wrap.addEventListener('mousedown', e => {
+  isDragging = true;
+  dragStart  = { x: e.clientX - offsetX, y: e.clientY - offsetY };
+  wrap.style.cursor = 'grabbing';
+});
+window.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  offsetX = e.clientX - dragStart.x;
+  offsetY = e.clientY - dragStart.y;
+  applyTransform();
+});
+window.addEventListener('mouseup', () => { isDragging = false; wrap.style.cursor = 'grab'; });
+
+// ─── Touch ────────────────────────────────────────────────────────────────────
+let lastTouchDist = null;
+wrap.addEventListener('touchstart', e => {
+  e.preventDefault();
+  if (e.touches.length === 1) {
+    isDragging = true;
+    dragStart  = { x: e.touches[0].clientX - offsetX, y: e.touches[0].clientY - offsetY };
+  } else if (e.touches.length === 2) {
+    lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  }
+}, { passive: false });
+
+wrap.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (e.touches.length === 1 && isDragging) {
+    offsetX = e.touches[0].clientX - dragStart.x;
+    offsetY = e.touches[0].clientY - dragStart.y;
+    applyTransform();
+  } else if (e.touches.length === 2) {
+    const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    if (lastTouchDist) {
+      const factor = dist / lastTouchDist;
+      const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const my = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      offsetX = mx + (offsetX - mx) * factor;
+      offsetY = my + (offsetY - my) * factor;
+      scale   = Math.max(0.15, Math.min(2.5, scale * factor));
+      applyTransform();
+    }
+    lastTouchDist = dist;
+  }
+}, { passive: false });
+wrap.addEventListener('touchend', () => { isDragging = false; lastTouchDist = null; });
+
+// ─── Zoom ─────────────────────────────────────────────────────────────────────
+wrap.addEventListener('wheel', e => {
+  e.preventDefault();
+  const factor = e.deltaY > 0 ? 0.92 : 1.08;
+  const rect   = wrap.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  offsetX = mx + (offsetX - mx) * factor;
+  offsetY = my + (offsetY - my) * factor;
+  scale   = Math.max(0.15, Math.min(2.5, scale * factor));
+  applyTransform();
+}, { passive: false });
+
+function zoomIn()  { scale = Math.min(scale * 1.15, 2.5); applyTransform(); }
+function zoomOut() { scale = Math.max(scale * 0.85, 0.15); applyTransform(); }
+function resetView() {
+  scale   = 1;
+  offsetX = window.innerWidth  / 2 - GRAPH_CX;
+  offsetY = window.innerHeight / 2 - GRAPH_CY;
+  applyTransform();
+  deselectNode();
+}
+
+// ─── Selection ────────────────────────────────────────────────────────────────
+function selectNode(n) {
+  if (activeNode) document.getElementById('n_' + activeNode)?.classList.remove('active');
+  activeNode = n.id;
+  document.getElementById('n_' + n.id)?.classList.add('active');
+  document.getElementById('ip-title').textContent = n.title;
+  document.getElementById('ip-title').style.color = layerColors[n.layer];
+  document.getElementById('ip-desc').textContent  = n.desc;
+  const depLabels = (n.deps || []).map(d => {
+    const found = nodes.find(x => x.id === d);
+    return found ? `<span>${found.title}</span>` : '';
+  }).join('');
+  document.getElementById('ip-deps').innerHTML = depLabels
+    ? `<div style="margin-bottom:5px;color:#5a6480">Depends on:</div>${depLabels}` : '';
+  infoPanel.classList.add('visible');
+  drawEdges();
+}
+
+function deselectNode() {
+  if (activeNode) document.getElementById('n_' + activeNode)?.classList.remove('active');
+  activeNode = null;
+  infoPanel.classList.remove('visible');
+  drawEdges();
+}
+
+wrap.addEventListener('click', deselectNode);
+
+// ─── Hint ─────────────────────────────────────────────────────────────────────
+const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+document.getElementById('hint').innerHTML = isTouchDevice
+  ? '👆 Drag to pan &nbsp;·&nbsp; Pinch to zoom &nbsp;·&nbsp; Tap node for details'
+  : '🖱 Drag to pan &nbsp;·&nbsp; Scroll to zoom &nbsp;·&nbsp; Click node for details';
+
+resizeCanvas();
+applyTransform();
+</script>
+</body>
+</html>

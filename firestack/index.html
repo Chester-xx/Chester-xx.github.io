@@ -2,7 +2,7 @@
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BlendViewer - Case Study</title>
+<title>FireStack - Case Study</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
@@ -52,21 +52,19 @@
 <main class="flex-grow flex flex-col">
 <div class="flex flex-wrap gap-3 mb-8">
 <span class="text-xs uppercase tracking-wider font-bold text-primary bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full">C++</span>
-<span class="text-xs uppercase tracking-wider font-bold text-primary bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full">Qt</span>
 <span class="text-xs uppercase tracking-wider font-bold text-primary bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full">CMake</span>
-<span class="text-xs uppercase tracking-wider font-bold text-primary bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full">Visual Studio</span>
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16 items-end">
 <div class="lg:col-span-2">
 <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white mb-6">
-                        BlendViewer
+                        FireStack
                     </h1>
-<p class="text-lg md:text-xl font-light leading-relaxed text-slate-600 dark:text-slate-300 max-w-2xl">
-    BlendViewer is a lightweight glTF (.gltf / .glb) rendering and inspection application under development. Being built with the Qt Framework (C++ & QML). The project focuses on providing an intuitive UI for loading, viewing, and manipulating 3D models using Qt Quick 3D.
+                    <p class="text-lg md:text-xl font-light leading-relaxed text-slate-600 dark:text-slate-300 max-w-2xl">
+                        A personal C++ learning project focused on building on basics and advancing low level learning for myself. The project taught me structuring, build systems and compiler toolchain complexities such as objects and linking. This project started BlendViewer and also attempted to deepen my knowledge on data structures and algorithms.
                     </p>
 </div>
 <div class="lg:col-span-1">
-<a class="group flex items-center justify-between p-6 bg-card-dark border border-slate-800 rounded-lg hover:border-primary/50 transition-all duration-300 h-full" href="https://github.com/Chester-xx/BlendViewer">
+<a class="group flex items-center justify-between p-6 bg-card-dark border border-slate-800 rounded-lg hover:border-primary/50 transition-all duration-300 h-full" href="https://github.com/Chester-xx/FireStack">
 <div>
 <h3 class="text-white font-bold text-lg mb-1 group-hover:text-primary transition-colors">GitHub Repository</h3>
 <span class="text-sm text-slate-400">View Source Code</span>
@@ -79,9 +77,9 @@
 </div>
 <div class="w-full aspect-video bg-card-dark rounded-xl border border-slate-800 overflow-hidden mb-12 relative group">
 <div class="absolute inset-0 bg-gradient-to-t from-background-dark/80 to-transparent z-10 pointer-events-none"></div>
-<a href="live-reference/"><img alt="BlendViewer user interface visualization" class="w-full h-full object-contain opacity-90 group-hover:scale-105 transition-transform duration-700" src="../assets/BlendViewer.png"/></a>
+<a href="live-reference/"><img alt="FireStack Code Example" class="w-full h-full object-contain opacity-90 group-hover:scale-105 transition-transform duration-700" src="../assets/FireStack.png"/></a>
 <div class="absolute bottom-6 left-6 z-20">
-<span class="bg-black/50 backdrop-blur-md text-white text-xs uppercase tracking-widest font-bold px-3 py-2 rounded border border-white/10">See live view</span>
+<span class="bg-black/50 backdrop-blur-md text-white text-xs uppercase tracking-widest font-bold px-3 py-2 rounded border border-white/10">Code Block</span>
 </div>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
@@ -91,7 +89,7 @@
 <h3 class="text-xl font-bold text-white">Architecture Dependency Map</h3>
 </div>
 <p class="text-slate-400 mb-6 font-light">
-                        Visualizing the modular architecture separating perception, planning, and control layers. The build relies on C++, Qt, Windeploy &amp; CMake to link together.
+                        Visualizing the modular architecture separating perception, planning, and control layers. The dependency map illustrates how each module interacts, highlighting the flow of data and control signals for optimization or refactoring. 
                     </p>
 <a href="dependency-map/"><div class="h-40 bg-slate-800/50 rounded border border-slate-700/50 flex items-center justify-center relative overflow-hidden group/graph cursor-pointer">
 <div class="absolute inset-0 flex items-center justify-center">
@@ -106,17 +104,17 @@
 <h3 class="text-xl font-bold text-white">Release Downloads</h3>
 </div>
 <div class="space-y-4">
-<a class="flex items-center justify-between p-4 bg-slate-800/30 rounded border border-slate-700/50 hover:bg-slate-800/60 hover:border-primary/30 transition-all group/dl" href="https://github.com/Chester-xx/BlendViewer/releases">
+<a class="flex items-center justify-between p-4 bg-slate-800/30 rounded border border-slate-700/50 hover:bg-slate-800/60 hover:border-primary/30 transition-all group/dl" href="https://github.com/Chester-xx/FireStack/tree/main/">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-slate-400 group-hover/dl:text-primary transition-colors">terminal</span>
 <div>
-<div class="text-sm font-bold text-slate-200">Latest Release</div>
-<div class="text-xs text-slate-500">v1.0.0 • Unreleased</div>
+<div class="text-sm font-bold text-slate-200">Source Code</div>
+<div class="text-xs text-slate-500">Non-release • Files</div>
 </div>
 </div>
 <span class="material-symbols-outlined text-slate-500 text-sm">arrow_downward</span>
 </a>
-<a class="flex items-center justify-between p-4 bg-slate-800/30 rounded border border-slate-700/50 hover:bg-slate-800/60 hover:border-primary/30 transition-all group/dl" href="https://github.com/Chester-xx/BlendViewer/blob/main/README.md">
+<a class="flex items-center justify-between p-4 bg-slate-800/30 rounded border border-slate-700/50 hover:bg-slate-800/60 hover:border-primary/30 transition-all group/dl" href="https://github.com/Chester-xx/FireStack/blob/main/README.md">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-slate-400 group-hover/dl:text-primary transition-colors">description</span>
 <div>
@@ -133,21 +131,21 @@
 <h2 class="text-2xl font-bold text-white mb-8 tracking-tight">Technical Challenges</h2>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-slate-400">
 <div class="space-y-3">
-<div class="text-primary font-bold text-lg mb-2">01. Learning The Framework</div>
+<div class="text-primary font-bold text-lg mb-2">01. Software Structuring</div>
 <p class="font-light leading-relaxed">
-                            Qt's signal-slot mechanism and QML integration posed a steep learning curve. I had to refactor and migrate the initial C++ codebase (FireStack Sub-Project) to leverage Qt's event-driven architecture effectively.
+                            Designing and implementing a professional C++ software architecture in learning becomes quite complicated with the addition of CMake as a build system. I had to learn about best practices for organizing code, managing dependencies, and ensuring modularity and maintainability. This experience taught me the importance of software design principles and how to apply them effectively in a real-world project.
                         </p>
 </div>
 <div class="space-y-3">
-<div class="text-primary font-bold text-lg mb-2">02. Starting The Project</div>
+<div class="text-primary font-bold text-lg mb-2">02. CMake</div>
 <p class="font-light leading-relaxed">
-                            Initialising and building the application architecture from the ground up took over a month to get working. I focused on creating a modular system with clear separation of concerns between rendering, UI, and data management. This posed the issue of linking Qt, CMake and Visual Studio together to get a working build.
+                            Understanding how CMake works and how it integrates with the build process was a significant challenge. I had to learn about CMake's syntax, configuration files (CMakeLists.txt), and how to manage dependencies and build targets. This experience highlighted the complexities of modern C++ build systems and the importance of understanding build tooling for effective software development.
                         </p>
 </div>
 <div class="space-y-3">
-<div class="text-primary font-bold text-lg mb-2">03. OpenGL</div>
+<div class="text-primary font-bold text-lg mb-2">03. Modularization</div>
 <p class="font-light leading-relaxed">
-                            Integrating OpenGL rendering within the Qt Quick 3D framework will be a significant challenge. I had previously attempted with working in OpenGL's rendering pipeline, but this becomes even more complicated with Qt's scene graph and event system.
+                            Breaking down the software into modular components and ensuring that they interact correctly was a complex task. I had to learn about designing interfaces, managing dependencies between modules, and ensuring that the overall architecture was cohesive and maintainable. This experience emphasized the importance of modular design in software development and how it can lead to more scalable and maintainable codebases.
                         </p>
 </div>
 </div>
