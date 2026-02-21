@@ -2,7 +2,7 @@
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Matrix Calculator - Case Study</title>
+<title>Python Video Test Downloader - Case Study</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
@@ -52,20 +52,21 @@
 <main class="flex-grow flex flex-col">
 <div class="flex flex-wrap gap-3 mb-8">
 <span class="text-xs uppercase tracking-wider font-bold text-primary bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full">Python</span>
+<span class="text-xs uppercase tracking-wider font-bold text-primary bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full">YTDLP</span>
 <span class="text-xs uppercase tracking-wider font-bold text-primary bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full">CustomTKinter</span>
 <span class="text-xs uppercase tracking-wider font-bold text-primary bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full">AutoPytoExe</span>
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16 items-end">
 <div class="lg:col-span-2">
 <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white mb-6">
-                        Matrix Calculator
+                        Python Video Test Downloader | A failure
                     </h1>
 <p class="text-lg md:text-xl font-light leading-relaxed text-slate-600 dark:text-slate-300 max-w-2xl">
-    Simple Python application to perform matrix operations. The program integrates a user interface using the CustomTkinter library and does not use any external libraries for mathematical calculations. The application supports addition, subtraction, multiplication, determinant calculation and matrix power raising.
+    This was one of my first real projects. A "simple" python application for video downloading, becoming a failure. The core idea was simple enough but the execution collapsed under its own weight. The threaded build produced video files that were technically valid but unplayable in any standard media player, and rather than diagnose why, I just kept adding layers around the problem. The real irony is that the "standalone" executable wasn't standalone at all. It relied on 7-zip being pre-installed or installed on launch to unpack its own bundled dependencies at runtime, meaning self-contained, still silently assumed two external tools on the user's machine before it could do anything. This resulted in my learning curve towards C# and the app I built with that change of mindset.
                     </p>
 </div>
 <div class="lg:col-span-1">
-<a class="group flex items-center justify-between p-6 bg-card-dark border border-slate-800 rounded-lg hover:border-primary/50 transition-all duration-300 h-full" href="https://github.com/Chester-xx/Matrix-Calculator">
+<a class="group flex items-center justify-between p-6 bg-card-dark border border-slate-800 rounded-lg hover:border-primary/50 transition-all duration-300 h-full" href="https://github.com/Chester-xx/Obsolete-Python-Video-Downloader">
 <div>
 <h3 class="text-white font-bold text-lg mb-1 group-hover:text-primary transition-colors">GitHub Repository</h3>
 <span class="text-sm text-slate-400">View Source Code</span>
@@ -78,7 +79,7 @@
 </div>
 <div class="w-full aspect-video bg-card-dark rounded-xl border border-slate-800 overflow-hidden mb-12 relative group">
 <div class="absolute inset-0 bg-gradient-to-t from-background-dark/80 to-transparent z-10 pointer-events-none"></div>
-<img alt="Matrix Calculator User Interface Design" class="w-full h-full object-contain opacity-90 group-hover:scale-105 transition-transform duration-700" src="../assets/MatrixCalculator.png"/>
+<img alt="Python Video Downloader User Interface Design" class="w-full h-full object-contain opacity-90 group-hover:scale-105 transition-transform duration-700" src="../assets/PythonVideoDownloader.png"/>
 <div class="absolute bottom-6 left-6 z-20">
 <span class="bg-black/50 backdrop-blur-md text-white text-xs uppercase tracking-widest font-bold px-3 py-2 rounded border border-white/10">User Interface</span>
 </div>
@@ -90,7 +91,7 @@
 <h3 class="text-xl font-bold text-white">Architecture Dependency Map</h3>
 </div>
 <p class="text-slate-400 mb-6 font-light">
-                        Visualizing the modular architecture separating perception, planning, and control layers. Highlighting how pythons interpreter interacts with core logic and the complicated compilation to executables.
+                        Visualizing the modular architecture separating perception, planning, and control layers. Highlighting the failed project and its scattered modules across the codebase, emphasizing the lack of cohesive structure and maintainability.
                     </p>
 <a href="dependency-map/"><div class="h-40 bg-slate-800/50 rounded border border-slate-700/50 flex items-center justify-center relative overflow-hidden group/graph cursor-pointer">
 <div class="absolute inset-0 flex items-center justify-center">
@@ -105,17 +106,17 @@
 <h3 class="text-xl font-bold text-white">Release Downloads</h3>
 </div>
 <div class="space-y-4">
-<a class="flex items-center justify-between p-4 bg-slate-800/30 rounded border border-slate-700/50 hover:bg-slate-800/60 hover:border-primary/30 transition-all group/dl" href="https://github.com/Chester-xx/Matrix-Calculator/releases">
+<a class="flex items-center justify-between p-4 bg-slate-800/30 rounded border border-slate-700/50 hover:bg-slate-800/60 hover:border-primary/30 transition-all group/dl" href="https://github.com/Chester-xx/Obsolete-Python-Video-Downloader/releases">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-slate-400 group-hover/dl:text-primary transition-colors">terminal</span>
 <div>
 <div class="text-sm font-bold text-slate-200">Latest Release</div>
-<div class="text-xs text-slate-500">v1.0.2 • Pre-release</div>
+<div class="text-xs text-slate-500">v2.0.0 • Non-functional</div>
 </div>
 </div>
 <span class="material-symbols-outlined text-slate-500 text-sm">arrow_downward</span>
 </a>
-<a class="flex items-center justify-between p-4 bg-slate-800/30 rounded border border-slate-700/50 hover:bg-slate-800/60 hover:border-primary/30 transition-all group/dl" href="https://github.com/Chester-xx/Matrix-Calculator/blob/main/README.md">
+<a class="flex items-center justify-between p-4 bg-slate-800/30 rounded border border-slate-700/50 hover:bg-slate-800/60 hover:border-primary/30 transition-all group/dl" href="https://github.com/Chester-xx/Obsolete-Python-Video-Downloader/blob/main/README.md">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-slate-400 group-hover/dl:text-primary transition-colors">description</span>
 <div>
@@ -132,21 +133,21 @@
 <h2 class="text-2xl font-bold text-white mb-8 tracking-tight">Technical Challenges</h2>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-slate-400">
 <div class="space-y-3">
-<div class="text-primary font-bold text-lg mb-2">01. Unseasoned Development</div>
+<div class="text-primary font-bold text-lg mb-2">01. Ignorance</div>
 <p class="font-light leading-relaxed">
-                            As this was my first time working with Python and CustomTKinter, there was a significant learning curve in understanding the language features, libraries, and best practices. I had to spend time familiarizing myself with the syntax, data structures, and development environment to effectively build the application. This experience taught me the importance of continuous learning and adaptability when working with new technologies.
+                            As a beginner in software development, I faced a steep learning curve in understanding the fundamentals of programming, software architecture, and best practices. My lack of experience led to poor design decisions, such as tightly coupling components and neglecting error handling, which ultimately contributed to the project's failure. This experience taught me the importance of foundational knowledge and the need to continuously learn and improve my skills as an engineer.
                         </p>
 </div>
 <div class="space-y-3">
-<div class="text-primary font-bold text-lg mb-2">02. Interpreters</div>
+<div class="text-primary font-bold text-lg mb-2">02. Overcomplexity</div>
 <p class="font-light leading-relaxed">
-                            Understanding how Python's interpreter works and how it limits its portability was a significant challenge. I had to learn about the differences between interpreted and compiled languages, and how to manage dependencies and packaging for distribution. This experience highlighted the complexities of deploying Python applications and the importance of considering the end-user environment when developing software.
+                            In an attempt to add features and functionality, I overcomplicated the codebase with unnecessary layers of abstraction and convoluted logic. This made the code difficult to understand, maintain, and debug, leading to a fragile application that was prone to breaking with any changes. This experience highlighted the importance of simplicity and clarity in software design, and the need to prioritize maintainability over feature bloat.
                         </p>
 </div>
 <div class="space-y-3">
-<div class="text-primary font-bold text-lg mb-2">03. Continuous Learning</div>
+<div class="text-primary font-bold text-lg mb-2">03. Dependencies</div>
 <p class="font-light leading-relaxed">
-                            The project required me to continuously learn and adapt to new tools and technologies, such as AutoPytoExe for packaging the application into an executable. This process involved researching best practices, troubleshooting issues, and iterating on the development process. It reinforced the importance of being a lifelong learner in the field of software development and staying up-to-date with emerging technologies and trends.
+                            The project relied heavily on external dependencies, such as 7-zip and ffmpeg, without properly managing them or ensuring they were included in the final executable. This resulted in a non-functional application that attempted to fix itself with my own code, introducing unneeded environment variables, dependency installations and crashes. This experience taught me the importance of proper dependency management and the need to ensure that all necessary components are included and properly configured in a software project.
                         </p>
 </div>
 </div>
