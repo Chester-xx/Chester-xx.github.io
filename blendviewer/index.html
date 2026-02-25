@@ -106,6 +106,16 @@
 <h3 class="text-xl font-bold text-white">Release Downloads</h3>
 </div>
 <div class="space-y-4">
+<a class="flex items-center justify-between p-4 bg-slate-800/30 rounded border border-slate-700/50 hover:bg-slate-800/60 hover:border-primary/30 transition-all group/dl" href="https://github.com/Chester-xx/BlendViewer/commits/main/">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400 group-hover/dl:text-primary transition-colors">commit</span>
+<div>
+<div class="text-sm font-bold text-slate-200">Latest Commit</div>
+<div class="text-xs text-slate-500" id="latest-commit">Loading...</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-500 text-sm">arrow_downward</span>
+</a>
 <a class="flex items-center justify-between p-4 bg-slate-800/30 rounded border border-slate-700/50 hover:bg-slate-800/60 hover:border-primary/30 transition-all group/dl" href="https://github.com/Chester-xx/BlendViewer/releases">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-slate-400 group-hover/dl:text-primary transition-colors">terminal</span>
@@ -171,4 +181,32 @@
 </footer>
 </div>
 
-</body></html>
+</body>
+<script>
+    async function loadLatestCommit() {
+        const el = document.getElementById('latest-commit');
+        try {
+            const res = await fetch('https://api.github.com/repos/Chester-xx/BlendViewer/commits/main');
+            const data = await res.json();
+
+            const sha = data.sha.substring(0, 7);
+            const date = new Date(data.commit.author.date);
+            const now = new Date();
+            const diff = Math.floor((now - date) / 1000);
+
+            let timeAgo;
+            if (diff < 60)                            timeAgo = `${diff}s ago`;
+            else if (diff < 3600)                     timeAgo = `${Math.floor(diff / 60)}m ago`;
+            else if (diff < 86400)                    timeAgo = `${Math.floor(diff / 3600)}h ago`;
+            else if (diff < 86400 * 365)              timeAgo = `${Math.floor(diff / 86400)}d ago`;
+            else                                      timeAgo = `${Math.floor(diff / (86400 * 365))}y ago`;
+
+            el.textContent = `${timeAgo} • ${sha}`;
+        } catch (e) {
+            el.textContent = 'Unavailable';
+        }
+    }
+
+    loadLatestCommit();
+</script>
+</html>
