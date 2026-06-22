@@ -1,0 +1,16 @@
+<footer id="contact" class="mt-32 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500 dark:text-slate-400" data-reveal data-reveal-chrome data-reveal-dir="up">
+  <div class="mb-4 md:mb-0">
+    &copy; {{ currentYear }} {{ site.name }}. Engineered in <span class="text-slate-900 dark:text-white">{{ site.location }}</span>.
+  </div>
+  <div class="flex gap-8">
+    <a class="hover:text-primary transition-colors flex items-center gap-2" href="{{ site.social.github }}">
+      <span class="material-symbols-outlined text-[18px]">code</span> GitHub
+    </a>
+    <a class="hover:text-primary transition-colors flex items-center gap-2" href="{{ site.social.linkedin }}">
+      <span class="material-symbols-outlined text-[18px]">work</span> LinkedIn
+    </a>
+    <a class="hover:text-primary transition-colors flex items-center gap-2" href="mailto:{{ site.social.email }}">
+      <span class="material-symbols-outlined text-[18px]">mail</span> Email
+    </a>
+  </div>
+</footer>

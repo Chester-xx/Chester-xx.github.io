@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>{{ title or site.title }}</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="/css/main.css" rel="stylesheet"/>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col antialiased selection:bg-primary selection:text-white">
+<div class="fixed inset-0 pointer-events-none opacity-[0.05] z-0 bg-grid-pattern"></div>
+{% if showWireframe %}
+<div class="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
+  <svg id="wireframe-svg" preserveAspectRatio="xMidYMid meet"></svg>
+</div>
+{% endif %}
+<div class="relative z-10 flex flex-col min-h-screen max-w-[1440px] mx-auto px-6 md:px-12 lg:px-20 py-10">
+
+  {% include "header.njk" %}
+
+  <main class="flex-grow flex flex-col{% if mainClass %} {{ mainClass }}{% endif %}">
+    {{ content | safe }}
+  </main>
+
+  {% include "footer.njk" %}
+
+</div>
+<script src="/js/reveal.js" defer></script>
+{% if showWireframe %}
+<script src="/js/wireframe.js" defer></script>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "site-prototype",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/css/main.css -o ./_site/css/main.css --minify",
+    "build:eleventy": "eleventy --config=eleventy.config.js",
+    "build": "npm run build:eleventy && npm run build:css",
+    "watch:css": "tailwindcss -i ./src/css/main.css -o ./_site/css/main.css --watch",
+    "serve": "npm run build:css && eleventy --config=eleventy.config.js --serve",
+    "dev": "npm run build && npm-run-all2 --parallel watch:css \"build:eleventy -- --serve\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.6",
+    "@tailwindcss/cli": "^4.3.1",
+    "npm-run-all2": "^9.0.2",
+    "tailwindcss": "^4.3.1"
+  }
+}

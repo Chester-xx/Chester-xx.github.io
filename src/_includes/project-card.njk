@@ -1,0 +1,19 @@
+<article onclick="window.location.href='/{{ project.slug }}/'" class="group relative flex flex-col h-full bg-slate-200 dark:bg-card-dark rounded-lg overflow-hidden border border-transparent dark:border-slate-800 hover:border-primary/50 transition-all duration-300 cursor-pointer">
+  <div class="aspect-[4/3] w-full overflow-hidden bg-slate-800">
+    <img alt="{{ project.imageAlt }}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" src="{{ project.image }}"/>
+  </div>
+  <div class="p-6 flex flex-col justify-between flex-grow">
+    <div>
+      <div class="flex flex-wrap gap-2 mb-3">
+        {% for tag in project.tags %}
+        <span class="text-[10px] uppercase tracking-wider font-bold {% if loop.first %}text-primary bg-primary/10{% else %}text-slate-400 bg-slate-800/50{% endif %} px-2 py-1 rounded">{{ tag }}</span>
+        {% endfor %}
+      </div>
+      <h4 class="text-xl font-bold text-white mb-2">{{ project.title }}</h4>
+      <p class="text-sm text-slate-400 line-clamp-2">{{ project.description }}</p>
+    </div>
+    <div class="mt-6 flex items-center text-primary text-sm font-bold group-hover:translate-x-1 transition-transform">
+      View Case Study <span class="material-symbols-outlined text-base ml-1">arrow_forward</span>
+    </div>
+  </div>
+</article>

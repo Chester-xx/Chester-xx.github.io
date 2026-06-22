@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>@Connect — Dependency Map</title>
+<link rel="stylesheet" href="/css/dependency-map.css">
+<style>
+  :root {
+    --accent-a: #00e5ff; /* entry */
+    --accent-b: #b388ff; /* ui / pages */
+    --accent-c: #ffb300; /* php backend */
+    --accent-d: #00e676; /* api layer */
+    --accent-e: #ff4d6d; /* system / infra */
+    --accent-f: #448aff; /* database */
+  }
+  .logo { color: var(--accent-b); }
+  .ctrl-btn:hover { border-color: var(--accent-b); color: var(--accent-b); }
+  .legend { flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<header>
+  <div><span class="logo">@Connect <span>— Architecture Dependency Map</span></span></div>
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-a)"></div> Entry</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-b)"></div> UI / Pages</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-c)"></div> PHP Backend</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-d)"></div> API Layer</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-e)"></div> System / Infra</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-f)"></div> Database</div>
+  </div>
+  <div class="controls">
+    <button class="ctrl-btn" id="btn-reset" type="button">↺ Reset</button>
+    <button class="ctrl-btn" id="btn-zoom-in" type="button">+ Zoom</button>
+    <button class="ctrl-btn" id="btn-zoom-out" type="button">− Zoom</button>
+  </div>
+</header>
+
+<div id="canvas-wrap">
+  <canvas id="graph-canvas"></canvas>
+  <div id="nodes-layer"></div>
+</div>
+
+<div id="info-panel">
+  <button id="info-close" type="button" aria-label="Close">✕</button>
+  <h3 id="ip-title">—</h3>
+  <p id="ip-desc">—</p>
+  <div class="deps-list" id="ip-deps"></div>
+</div>
+
+<div id="hint">
+  🖱 Drag to pan &nbsp;·&nbsp; Scroll to zoom &nbsp;·&nbsp; Click node for details
+</div>
+
+<div id="mobile-hint">
+  Drag to pan · Pinch to zoom · Tap a node for details
+</div>
+
+<script src="/js/dependency-map-engine.js"></script>
+<script>
+const nodes = [
+  // ── Entry ──
+  { id: 'index', x: 660, y: 100, layer: 'a', icon: '⚡', title: 'index.php',
+    sub: 'Landing router\nSession check → redirect', tag: 'Entry Point',
+    desc: 'Root landing page. Starts a PHP session and checks for an active UserID. Authenticated users are forwarded to /dashboard, unauthenticated users to /login. No UI of its own.',
+    deps: ['session', 'dashboard', 'login_page'] },
+
+  // ── UI / Pages ──
+  { id: 'login_page', x: 200, y: 280, layer: 'b', icon: '🔐', title: '/login',
+    sub: 'Login · Sign Up\nForgot password link', tag: 'PHP Page',
+    desc: 'Login page directory. Contains login form (email + password), sign-up registration form, and a link to the password-reset flow. Submits to PHP backend handlers on the same page via POST.',
+    deps: ['auth_core', 'session', 'style'] },
+
+  { id: 'password_page', x: 460, y: 280, layer: 'b', icon: '🔑', title: '/password',
+    sub: 'Forgot password\nToken email · Reset form', tag: 'PHP Page',
+    desc: 'Password reset flow. Takes the user\'s email, validates account existence, generates a SHA256 token stored in tblPasswordResets, and presents a localhost test link. Reset form validates token and updates password.',
+    deps: ['auth_core', 'session', 'db_connect', 'style'] },
+
+  { id: 'dashboard', x: 660, y: 280, layer: 'b', icon: '🏠', title: '/dashboard',
+    sub: 'Feed · Create Post\nRecents / Following tabs', tag: 'PHP Page',
+    desc: 'Primary application page. Renders the nav bar, create-post area (text + media upload), and the post feed. Switches between Recents (all posts) and Following (friends only) tabs. All post/like/comment interactions are driven by AJAX calls to /api.',
+    deps: ['includes', 'session', 'api_posts', 'api_users', 'style'] },
+
+  { id: 'users_page', x: 900, y: 280, layer: 'b', icon: '👤', title: '/users',
+    sub: 'Own profile · Other profiles\nFollow / Unfollow', tag: 'PHP Page',
+    desc: 'Profile page. Detects whether the viewed profile belongs to the logged-in user or another account. Own profile shows post creation, friends list, follow requests, and settings link. Other profiles show follow/unfollow/cancel-request buttons.',
+    deps: ['includes', 'session', 'api_users', 'api_posts', 'style'] },
+
+  { id: 'messages_page', x: 1140, y: 280, layer: 'b', icon: '💬', title: '/dashboard/messages',
+    sub: 'Conversations · DM thread\nSearch users to chat', tag: 'PHP Page',
+    desc: 'Messaging interface. Lists active conversations from tblMessages. Search bar finds users to start new conversations. Clicking a conversation loads the message thread. Sending a message POSTs to /api/messages. Responsive for desktop and mobile.',
+    deps: ['includes', 'session', 'api_messages', 'api_search', 'style'] },
+
+  { id: 'search_page', x: 1340, y: 280, layer: 'b', icon: '🔍', title: '/dashboard/search',
+    sub: 'Username search\nUser preview cards', tag: 'PHP Page',
+    desc: 'Search page. Text input queries /api/search for matching usernames. Results are rendered as user preview cards that link to the matching /users profile page.',
+    deps: ['includes', 'session', 'api_search', 'style'] },
+
+  { id: 'settings_page', x: 1140, y: 460, layer: 'b', icon: '⚙️', title: '/dashboard/settings',
+    sub: 'Change username · pfp\nLogout · Delete account', tag: 'PHP Page',
+    desc: 'Account settings page. Lets the user change their username and profile picture. Also provides logout (calls /logout.php) and account deletion, which cascades removal of all user data via ON DELETE CASCADE constraints.',
+    deps: ['includes', 'session', 'api_users', 'style'] },
+
+  { id: 'logout', x: 460, y: 460, layer: 'e', icon: '🚪', title: 'logout.php',
+    sub: 'Session destroy\nRedirect to /login', tag: 'PHP Script',
+    desc: 'Destroys the current PHP session and unsets all session variables, then redirects the user to /login. Called from the settings page.',
+    deps: ['session'] },
+
+  // ── PHP Backend / Includes ──
+  { id: 'includes', x: 660, y: 460, layer: 'c', icon: '📦', title: '/includes',
+    sub: 'Shared PHP modules\nDB · auth · helpers', tag: 'PHP Includes',
+    desc: 'Shared PHP include directory. Contains reusable modules: database connection (dbconnect.php), session auth guard (checks UserID and redirects if not logged in), and common helper functions used across all pages.',
+    deps: ['db_connect', 'session'] },
+
+  { id: 'auth_core', x: 200, y: 460, layer: 'c', icon: '🛡', title: 'Auth Logic',
+    sub: 'Login · Register\nPassword hash · SHA256', tag: 'PHP Backend',
+    desc: 'Authentication PHP logic embedded in /login pages. Validates POST fields, checks email existence against tblUsers, compares SHA256-hashed passwords, creates session on success. Registration checks uniqueness of email/username, hashes password, and inserts into tblUsers.',
+    deps: ['db_connect', 'session', 'tbl_users'] },
+
+  // ── API Layer ──
+  { id: 'api_posts', x: 300, y: 660, layer: 'd', icon: '📝', title: '/api/posts',
+    sub: 'Create · Fetch · Like\nComment · Delete', tag: 'PHP API',
+    desc: 'Posts API endpoint group. Handles: fetching recent or following-filtered posts (GET with AJAX), creating new posts with optional media upload to /content/posts (POST), toggling likes in tblLikes, and adding/fetching comments in tblComments.',
+    deps: ['db_connect', 'session', 'tbl_posts', 'tbl_likes', 'tbl_comments', 'content_store'] },
+
+  { id: 'api_messages', x: 580, y: 660, layer: 'd', icon: '✉️', title: '/api/messages',
+    sub: 'Send · Fetch thread\nConversation list', tag: 'PHP API',
+    desc: 'Messages API endpoint group. Fetches conversation list (distinct SenderID/ReceiverID pairs from tblMessages), loads a full message thread between two users, and handles new message insertion via POST.',
+    deps: ['db_connect', 'session', 'tbl_messages'] },
+
+  { id: 'api_search', x: 840, y: 660, layer: 'd', icon: '🔎', title: '/api/search',
+    sub: 'Username search\nReturns user matches', tag: 'PHP API',
+    desc: 'Search API endpoint. Accepts a username query string, runs a LIKE query against tblUsers.Username, and returns matching user records (UserID, Username, pfpPath) as JSON for AJAX rendering.',
+    deps: ['db_connect', 'session', 'tbl_users'] },
+
+  { id: 'api_users', x: 1080, y: 660, layer: 'd', icon: '👥', title: '/api/users',
+    sub: 'Profile data · Follow\nFriends · Requests', tag: 'PHP API',
+    desc: 'Users API endpoint group. Handles: fetching user profile data, sending/cancelling/accepting follow requests (tblFollowRequests), managing confirmed followers (tblFollowers), updating profile image and username, and account deletion.',
+    deps: ['db_connect', 'session', 'tbl_users', 'tbl_followers', 'tbl_follow_requests', 'content_store'] },
+
+  // ── System / Infra ──
+  { id: 'session', x: 660, y: 640, layer: 'e', icon: '🔒', title: 'PHP Sessions',
+    sub: 'UserID state\nAuth guard · CSRF', tag: 'PHP Runtime',
+    desc: 'PHP native session system. session_start() is called on every page. $_SESSION["UserID"] is the primary auth token — its presence determines if a user is logged in. All pages guard against unauthorized access by checking this value and redirecting if absent.',
+    deps: [] },
+
+  { id: 'xampp', x: 900, y: 460, layer: 'e', icon: '🖥', title: 'XAMPP / Apache',
+    sub: 'Local dev server\nPHP runtime · htdocs', tag: 'Infrastructure',
+    desc: 'XAMPP provides the full local development stack: Apache HTTP server, PHP runtime, and MySQL via MariaDB. All project files live under htdocs/. phpMyAdmin is available but not configured for this project.',
+    deps: ['db_connect'] },
+
+  { id: 'style', x: 1320, y: 460, layer: 'e', icon: '🎨', title: '/style',
+    sub: 'Global CSS\nResponsive · mobile', tag: 'CSS',
+    desc: 'Global stylesheet directory. Contains shared CSS for typography, layout, component styling, and responsive breakpoints. Tested in Chrome desktop and mobile view. Applied across all pages via link tags.',
+    deps: [] },
+
+  // ── Database ──
+  { id: 'db_connect', x: 300, y: 880, layer: 'f', icon: '🗄', title: 'dbConnect',
+    sub: 'mysqli connection\nMySQL · XAMPP', tag: 'MySQL Database',
+    desc: 'The main MySQL database. Connection established via mysqli in PHP (includes/dbconnect.php). All 8 tables live here. All relational tables use ON DELETE CASCADE. Managed via phpMyAdmin in XAMPP.',
+    deps: ['tbl_users', 'tbl_posts', 'tbl_messages', 'tbl_comments', 'tbl_likes', 'tbl_followers', 'tbl_follow_requests', 'tbl_pw_resets'] },
+
+  { id: 'tbl_users', x: 60, y: 1080, layer: 'f', icon: '🧑', title: 'tblUsers',
+    sub: 'UserID · Email\nUsername · pfpPath', tag: 'MySQL Table',
+    desc: 'Primary user table. Stores UserID (PK, auto_inc), Email (unique), Password (SHA256 hashed), Username (unique, 50 chars), FullName (100 chars), and pfpPath (default: "default.jpg"). Central FK target for all other tables.',
+    deps: [] },
+
+  { id: 'tbl_posts', x: 300, y: 1080, layer: 'f', icon: '📄', title: 'tblPosts',
+    sub: 'PostID · UserID FK\nContent · Image · Time', tag: 'MySQL Table',
+    desc: 'Stores all posts. PostID (PK), UserID (FK → tblUsers), Content (text), Image (nullable varchar, relative path to /content/posts), CreateTime (datetime, current_timestamp).',
+    deps: [] },
+
+  { id: 'tbl_messages', x: 540, y: 1080, layer: 'f', icon: '✉️', title: 'tblMessages',
+    sub: 'SenderID · ReceiverID\nMessage · SentAt', tag: 'MySQL Table',
+    desc: 'Private message store. MessageID (PK), SenderID (FK → tblUsers), ReceiverID (FK → tblUsers), Message (text), SentAt (datetime, current_timestamp).',
+    deps: [] },
+
+  { id: 'tbl_comments', x: 780, y: 1080, layer: 'f', icon: '💭', title: 'tblComments',
+    sub: 'CommentID · PostID FK\nUserID FK · Content', tag: 'MySQL Table',
+    desc: 'Stores all post comments. CommentID (PK), PostID (FK → tblPosts), UserID (FK → tblUsers), Content (text), CreateTime (datetime). ON DELETE CASCADE removes comments when a post or user is deleted.',
+    deps: [] },
+
+  { id: 'tbl_likes', x: 1020, y: 1080, layer: 'f', icon: '❤️', title: 'tblLikes',
+    sub: 'LikeID · UserID FK\nPostID FK · LikeDate', tag: 'MySQL Table',
+    desc: 'Tracks individual likes. LikeID (PK), UserID (FK → tblUsers), PostID (FK → tblPosts), LikeDate (datetime). One row per like — toggled by the API (insert on like, delete on unlike).',
+    deps: [] },
+
+  { id: 'tbl_followers', x: 1260, y: 1080, layer: 'f', icon: '🤝', title: 'tblFollowers',
+    sub: 'FollowerID · UserID FK\nUserFollowerID FK', tag: 'MySQL Table',
+    desc: 'Confirmed friendship/follower relations. FollowerID (PK), UserID (FK → tblUsers), UserFollowerID (FK → tblUsers). A row here means the relationship is active and bidirectional queries are used for the Following feed.',
+    deps: [] },
+
+  { id: 'tbl_follow_requests', x: 1460, y: 1080, layer: 'f', icon: '📨', title: 'tblFollowRequests',
+    sub: 'RequestID · FromID FK\nToID FK · Pending', tag: 'MySQL Table',
+    desc: 'Pending follow requests awaiting accept/decline. RequestID (PK), FromID (FK → tblUsers), ToID (FK → tblUsers). Row is deleted and moved to tblFollowers on accept, or simply deleted on decline/cancel.',
+    deps: [] },
+
+  { id: 'tbl_pw_resets', x: 1680, y: 1080, layer: 'f', icon: '🔄', title: 'tblPasswordResets',
+    sub: 'Token · Email FK\nExpires · datetime', tag: 'MySQL Table',
+    desc: 'Temporary password reset token store. ResetID (PK), Email (FK → tblUsers.Email), Token (SHA256 hashed), Expires (datetime). Token is validated on the reset page and the row is deleted once the password is successfully changed.',
+    deps: [] },
+
+  // ── Content Storage ──
+  { id: 'content_store', x: 1500, y: 660, layer: 'e', icon: '🖼', title: '/content',
+    sub: 'Post media · Profile photos\n/posts · /profiles · /assets', tag: 'File Storage',
+    desc: 'Public file storage directory under htdocs. /content/posts stores uploaded post images/gifs/videos as relative paths referenced in tblPosts.Image. /content/profiles stores user profile photos (+ default.jpg). Accessible via URL — a known security tradeoff noted for future improvement.',
+    deps: [] },
+];
+
+const edges = [
+  { from: 'index',         to: 'dashboard' },
+  { from: 'index',         to: 'login_page' },
+  { from: 'index',         to: 'session' },
+
+  { from: 'login_page',    to: 'auth_core' },
+  { from: 'login_page',    to: 'session' },
+  { from: 'login_page',    to: 'style' },
+  { from: 'password_page', to: 'auth_core' },
+  { from: 'password_page', to: 'db_connect' },
+  { from: 'password_page', to: 'style' },
+  { from: 'auth_core',     to: 'db_connect' },
+  { from: 'auth_core',     to: 'session' },
+  { from: 'auth_core',     to: 'tbl_users' },
+
+  { from: 'dashboard',     to: 'includes' },
+  { from: 'dashboard',     to: 'session' },
+  { from: 'dashboard',     to: 'api_posts' },
+  { from: 'dashboard',     to: 'api_users' },
+  { from: 'dashboard',     to: 'style' },
+  { from: 'dashboard',     to: 'messages_page' },
+  { from: 'dashboard',     to: 'search_page' },
+  { from: 'dashboard',     to: 'settings_page' },
+  { from: 'dashboard',     to: 'users_page' },
+
+  { from: 'users_page',    to: 'includes' },
+  { from: 'users_page',    to: 'session' },
+  { from: 'users_page',    to: 'api_users' },
+  { from: 'users_page',    to: 'api_posts' },
+  { from: 'users_page',    to: 'style' },
+
+  { from: 'messages_page', to: 'includes' },
+  { from: 'messages_page', to: 'session' },
+  { from: 'messages_page', to: 'api_messages' },
+  { from: 'messages_page', to: 'api_search' },
+  { from: 'messages_page', to: 'style' },
+
+  { from: 'search_page',   to: 'includes' },
+  { from: 'search_page',   to: 'session' },
+  { from: 'search_page',   to: 'api_search' },
+  { from: 'search_page',   to: 'style' },
+
+  { from: 'settings_page', to: 'includes' },
+  { from: 'settings_page', to: 'session' },
+  { from: 'settings_page', to: 'api_users' },
+  { from: 'settings_page', to: 'logout' },
+  { from: 'settings_page', to: 'style' },
+  { from: 'logout',        to: 'session' },
+
+  { from: 'includes',      to: 'db_connect' },
+  { from: 'includes',      to: 'session' },
+
+  { from: 'api_posts',     to: 'db_connect' },
+  { from: 'api_posts',     to: 'session' },
+  { from: 'api_posts',     to: 'tbl_posts' },
+  { from: 'api_posts',     to: 'tbl_likes' },
+  { from: 'api_posts',     to: 'tbl_comments' },
+  { from: 'api_posts',     to: 'content_store' },
+
+  { from: 'api_messages',  to: 'db_connect' },
+  { from: 'api_messages',  to: 'session' },
+  { from: 'api_messages',  to: 'tbl_messages' },
+
+  { from: 'api_search',    to: 'db_connect' },
+  { from: 'api_search',    to: 'session' },
+  { from: 'api_search',    to: 'tbl_users' },
+
+  { from: 'api_users',     to: 'db_connect' },
+  { from: 'api_users',     to: 'session' },
+  { from: 'api_users',     to: 'tbl_users' },
+  { from: 'api_users',     to: 'tbl_followers' },
+  { from: 'api_users',     to: 'tbl_follow_requests' },
+  { from: 'api_users',     to: 'content_store' },
+
+  { from: 'db_connect',    to: 'tbl_users' },
+  { from: 'db_connect',    to: 'tbl_posts' },
+  { from: 'db_connect',    to: 'tbl_messages' },
+  { from: 'db_connect',    to: 'tbl_comments' },
+  { from: 'db_connect',    to: 'tbl_likes' },
+  { from: 'db_connect',    to: 'tbl_followers' },
+  { from: 'db_connect',    to: 'tbl_follow_requests' },
+  { from: 'db_connect',    to: 'tbl_pw_resets' },
+
+  { from: 'xampp',         to: 'db_connect' },
+  { from: 'password_page', to: 'tbl_pw_resets' },
+];
+
+const layerColors = {
+  a: getComputedStyle(document.documentElement).getPropertyValue('--accent-a').trim(),
+  b: getComputedStyle(document.documentElement).getPropertyValue('--accent-b').trim(),
+  c: getComputedStyle(document.documentElement).getPropertyValue('--accent-c').trim(),
+  d: getComputedStyle(document.documentElement).getPropertyValue('--accent-d').trim(),
+  e: getComputedStyle(document.documentElement).getPropertyValue('--accent-e').trim(),
+  f: getComputedStyle(document.documentElement).getPropertyValue('--accent-f').trim(),
+};
+
+DependencyMap.init({ nodes, edges, layerColors });
+</script>
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Python Video Downloader — Dependency Map</title>
+<link rel="stylesheet" href="/css/dependency-map.css">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #0f1115;
+    --border: #1a1e28;
+    --text: #c8cfe0;
+    --text-dim: #434860;
+    --node-bg: #0f1218;
+
+    --accent-a: rgba(0,229,255,0.7);   /* entry */
+    --accent-b: rgba(179,136,255,0.65); /* stdlib */
+    --accent-c: rgba(255,179,0,0.65);   /* build */
+    --accent-e: rgba(255,77,109,0.75);  /* broken */
+    --accent-f: rgba(68,138,255,0.7);   /* external */
+  }
+
+  .logo { font-weight: 800; font-size: 15px; letter-spacing: 0.04em; color: var(--text-dim); }
+  .logo span { color: #2a3040; font-weight: 400; font-size: 12px; margin-left: 10px; }
+  .logo s { text-decoration-color: var(--accent-e); text-decoration-thickness: 2px; color: #4a5570; }
+
+  .status-badge {
+    font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--accent-e); border: 1px solid rgba(255,77,109,0.3);
+    padding: 3px 8px; border-radius: 3px;
+    background: rgba(255,77,109,0.06);
+  }
+
+  .ctrl-btn:hover { border-color: #3a4055; color: #6a7090; }
+
+  .node { background: var(--node-bg); }
+
+  /* Layers — deliberately lower saturation/opacity than other project
+     maps, reflecting this project's "obsolete / failed build" narrative. */
+  .layer-a { border: 1.5px solid rgba(0,229,255,0.4); box-shadow: 0 0 12px rgba(0,229,255,0.04); }
+  .layer-a .node-title { color: rgba(0,229,255,0.7); }
+  .layer-a .node-tag { background: rgba(0,229,255,0.07); color: rgba(0,229,255,0.6); }
+
+  .layer-e { border: 1.5px dashed rgba(255,77,109,0.5); box-shadow: 0 0 10px rgba(255,77,109,0.04); }
+  .layer-e .node-title { color: rgba(255,77,109,0.75); }
+  .layer-e .node-tag { background: rgba(255,77,109,0.07); color: rgba(255,77,109,0.6); }
+
+  .layer-b { border: 1.5px solid rgba(179,136,255,0.35); box-shadow: 0 0 10px rgba(179,136,255,0.03); }
+  .layer-b .node-title { color: rgba(179,136,255,0.65); }
+  .layer-b .node-tag { background: rgba(179,136,255,0.07); color: rgba(179,136,255,0.55); }
+
+  .layer-f { border: 1.5px solid rgba(68,138,255,0.35); box-shadow: 0 0 10px rgba(68,138,255,0.03); }
+  .layer-f .node-title { color: rgba(68,138,255,0.7); }
+  .layer-f .node-tag { background: rgba(68,138,255,0.07); color: rgba(68,138,255,0.6); }
+
+  .layer-c { border: 1.5px solid rgba(255,179,0,0.35); box-shadow: 0 0 10px rgba(255,179,0,0.03); }
+  .layer-c .node-title { color: rgba(255,179,0,0.65); }
+  .layer-c .node-tag { background: rgba(255,179,0,0.07); color: rgba(255,179,0,0.55); }
+
+  /* Dead/no-op nodes — deliberately near-invisible, this is the point */
+  .layer-dead { border: 1.5px dashed #1e2230; }
+  .layer-dead .node-title { color: #2e3448; }
+  .layer-dead .node-tag { background: #111318; color: #2a3040; }
+  .layer-dead .node-sub { color: #222636; }
+  .layer-dead .node-icon { opacity: 0.25; }
+
+  #hint { color: #252a38; }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <span class="logo"><s>Python Video Downloader</s> <span>— Architecture Dependency Map</span></span>
+    <span class="status-badge">⚠ Obsolete</span>
+  </div>
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-a)"></div> Entry / Build</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-e)"></div> Broken / Partial</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-b)"></div> stdlib</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-f)"></div> External</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-c)"></div> Compile</div>
+    <div class="leg-item"><div class="leg-dot" style="color:#1e2230"></div> Dead / No-op</div>
+  </div>
+  <div class="controls">
+    <button class="ctrl-btn" id="btn-reset" type="button">↺ Reset</button>
+    <button class="ctrl-btn" id="btn-zoom-in" type="button">+ Zoom</button>
+    <button class="ctrl-btn" id="btn-zoom-out" type="button">− Zoom</button>
+  </div>
+</header>
+
+<div id="canvas-wrap">
+  <canvas id="graph-canvas"></canvas>
+  <div id="nodes-layer"></div>
+</div>
+
+<div id="info-panel">
+  <button id="info-close" type="button" aria-label="Close">✕</button>
+  <h3 id="ip-title">—</h3>
+  <p id="ip-desc">—</p>
+  <div class="deps-list" id="ip-deps"></div>
+</div>
+
+<div id="hint">
+  🖱 Drag to pan &nbsp;·&nbsp; Scroll to zoom &nbsp;·&nbsp; Click node for details
+</div>
+
+<div id="mobile-hint">
+  Drag to pan · Pinch to zoom · Tap a node for details
+</div>
+
+<script src="/js/dependency-map-engine.js"></script>
+<script>
+const nodes = [
+  // ── Entry Scripts ──────────────────────────────────────────────────────────
+  { id: 'main_essential', x: 280, y: 100, layer: 'a', icon: '📄', title: 'main-essential-build.py',
+    sub: 'GUI-only build\nSimpler, yt-dlp as module', tag: 'Python Script',
+    desc: 'The "clean" build. A Tkinter GUI that calls yt-dlp directly as a Python module (not a subprocess). Simpler code, no threading, no live progress. Downloads work and files play correctly. Requires: os, sys, json, requests, subprocess, yt-dlp (pip), tkinter. The more reliable of the two scripts.',
+    deps: ['tkinter', 'yt_dlp_module', 'os', 'sys', 'json', 'requests', 'subprocess_mod'] },
+
+  { id: 'test_full', x: 720, y: 100, layer: 'e', icon: '⚠️', title: 'test-full-build.py',
+    sub: 'Threaded GUI build\n"Works" — format error on play', tag: 'Python Script ⚠',
+    warn: '⚠ Output file unplayable in media players. Works in editing software only.',
+    desc: 'The more ambitious but broken build. Uses threading for live download progress display via a Tkinter GUI. Calls yt-dlp.exe as a subprocess rather than using the Python module. Faster than main-essential-build.py but the output file has a format error — it plays in editing software but not in standard media players. An older version, never fixed.',
+    deps: ['tkinter', 'yt_dlp_exe', 'os', 'sys', 'json', 'subprocess_mod', 'threading'] },
+
+  { id: 'test_sys', x: 1100, y: 100, layer: 'dead', icon: '🧪', title: 'test-sys-vars.py',
+    sub: 'Dev scratch file\nNo production use', tag: 'Dev Scratch',
+    desc: 'Personal scratch file for prototyping new code before integrating into test-full-build.py. Has no connection to any running build. Included in the repo for completeness. No use to anyone else.',
+    deps: [] },
+
+  { id: 'untitled', x: 1280, y: 100, layer: 'dead', icon: '❓', title: 'Untitled-1.py',
+    sub: 'Unknown remnant\nForgotten experiment', tag: 'Unknown',
+    desc: 'An unnamed Python file, likely a forgotten experiment or partial implementation. Not referenced anywhere in the project and has no documented purpose. A classic artifact of a first project.',
+    deps: [] },
+
+  // ── stdlib modules ─────────────────────────────────────────────────────────
+  { id: 'tkinter', x: 150, y: 300, layer: 'b', icon: '🖼', title: 'tkinter',
+    sub: 'Python stdlib GUI\npip install tkinter', tag: 'Python stdlib',
+    desc: 'Standard Python GUI toolkit. Wraps the Tcl/Tk engine. Used by both scripts to produce the download window with a URL input field and download button. The readme incorrectly lists it as a pip install — tkinter ships with CPython and does not need to be pip-installed.',
+    deps: ['python_runtime'] },
+
+  { id: 'os', x: 340, y: 300, layer: 'b', icon: '💻', title: 'os',
+    sub: 'OS interface\nPath & env access', tag: 'Python stdlib',
+    desc: 'Python standard library os module. Used for file path construction, checking file existence, and interacting with the operating system environment. Both scripts rely on it for locating yt-dlp.exe and output directories.',
+    deps: ['python_runtime'] },
+
+  { id: 'sys', x: 460, y: 300, layer: 'b', icon: '⚙️', title: 'sys',
+    sub: 'System access\nArgs & interpreter info', tag: 'Python stdlib',
+    desc: 'Python standard library sys module. Used to access the Python interpreter path, command-line arguments, and exit the process on error.',
+    deps: ['python_runtime'] },
+
+  { id: 'json', x: 570, y: 300, layer: 'b', icon: '{}', title: 'json',
+    sub: 'JSON parse/write\nConfig or metadata', tag: 'Python stdlib',
+    desc: 'Python standard library json module. Used in both scripts, likely for reading or writing a small config or for parsing yt-dlp metadata output.',
+    deps: ['python_runtime'] },
+
+  { id: 'subprocess_mod', x: 680, y: 300, layer: 'b', icon: '🔀', title: 'subprocess',
+    sub: 'Spawn child processes\nyt-dlp.exe invocation', tag: 'Python stdlib',
+    desc: 'Python standard library subprocess module. Central to test-full-build.py — used to invoke yt-dlp.exe as a child process and pipe its stdout back to the GUI for live progress display. Also present in main-essential-build.py for ancillary process calls.',
+    deps: ['python_runtime'] },
+
+  { id: 'threading', x: 800, y: 300, layer: 'b', icon: '🧵', title: 'threading',
+    sub: 'Background download\nKeeps GUI responsive', tag: 'Python stdlib',
+    desc: 'Python standard library threading module. Used only in test-full-build.py to run the yt-dlp.exe subprocess on a background thread, keeping the Tkinter event loop responsive and allowing live progress text to update during download. Works — but the resulting file has a format error.',
+    deps: ['python_runtime'] },
+
+  { id: 'requests', x: 280, y: 300, layer: 'f', icon: '🌐', title: 'requests',
+    sub: 'HTTP client\npip install requests', tag: 'pip Package',
+    desc: 'Third-party HTTP library. Used in main-essential-build.py — likely for checking network connectivity, fetching video metadata, or downloading ancillary resources. Adds a dependency that could have been avoided with urllib from stdlib.',
+    deps: ['python_runtime'] },
+
+  // ── External binaries / modules ────────────────────────────────────────────
+  { id: 'yt_dlp_module', x: 200, y: 490, layer: 'f', icon: '▶️', title: 'yt-dlp (module)',
+    sub: 'pip install yt-dlp\nUsed in main-essential', tag: 'pip Package',
+    desc: 'yt-dlp installed as a Python package via pip. Used by main-essential-build.py — called directly as a Python API rather than as a subprocess. Cleaner integration, no bundling headaches, but no live progress output to the GUI.',
+    deps: ['python_runtime'] },
+
+  { id: 'yt_dlp_exe', x: 720, y: 490, layer: 'f', icon: '▶️', title: 'yt-dlp.exe',
+    sub: '19.5 MB binary\nBundled in repo root', tag: 'External Binary',
+    warn: '⚠ Bundled directly in repo root. Must be in same directory as script.',
+    desc: 'yt-dlp.exe — the standalone yt-dlp binary (19.5 MB), committed directly into the repository root. Used by test-full-build.py via subprocess. Bundling the exe in the repo is the root cause of much of the complexity. No auto-install yet — the readme notes this as a known issue to fix.',
+    deps: ['ffmpeg_internal'] },
+
+  { id: 'ffmpeg_internal', x: 720, y: 660, layer: 'e', icon: '🎞', title: 'ffmpeg (internal)',
+    sub: 'Embedded in yt-dlp.exe\nMuxing broken for playback', tag: 'Bundled Dep',
+    warn: '⚠ Output plays in editors, not in media players.',
+    desc: 'ffmpeg is embedded within yt-dlp.exe for stream muxing. The format error that makes output files unplayable in media players (but functional in editing software) likely stems from an ffmpeg muxing misconfiguration — incorrect container format, missing moov atom, or incompatible codec flags produced by the subprocess call chain. Never diagnosed or fixed.',
+    deps: [] },
+
+  // ── Python Runtime ─────────────────────────────────────────────────────────
+  { id: 'python_runtime', x: 500, y: 660, layer: 'a', icon: '🐍', title: 'Python Interpreter',
+    sub: 'CPython runtime\nRequired for .py scripts', tag: 'Python Runtime',
+    desc: 'CPython interpreter required to run either .py script. Must be installed separately. The readme correctly notes this as a prerequisite. The compile path (auto-py-to-exe) bundles a copy of the interpreter into the .exe to remove this requirement for end users.',
+    deps: [] },
+
+  // ── Compile Path ───────────────────────────────────────────────────────────
+  { id: 'auto_py_to_exe', x: 1050, y: 300, layer: 'c', icon: '🔧', title: 'auto-py-to-exe',
+    sub: 'PyInstaller GUI wrapper\nProduces .exe bundles', tag: 'Build Tool',
+    desc: 'auto-py-to-exe wraps PyInstaller to produce the two .exe builds. Configured to bundle the Python interpreter, tkinter, yt-dlp module, and all stdlib dependencies. Used to produce both Video-Downloader-GUI.exe and the console variant.',
+    deps: ['pyinstaller'] },
+
+  { id: 'pyinstaller', x: 1050, y: 490, layer: 'c', icon: '📦', title: 'PyInstaller',
+    sub: 'Bundle → .exe\nBootloader + interpreter', tag: 'Compiler',
+    desc: 'PyInstaller collects all imports from the entry script, bundles them with the CPython interpreter and a bootloader, and produces a self-contained .exe. Each of the two builds (GUI, console) is ~31 MB because the full interpreter and all pip packages are included.',
+    deps: ['python_runtime'] },
+
+  { id: 'exe_gui', x: 880, y: 660, layer: 'c', icon: '💾', title: 'Video-Downloader-GUI.exe',
+    sub: '31.1 MB standalone\nRequires 7-zip to unpack deps', tag: 'Output Binary',
+    warn: '⚠ Requires 7-zip installed. Unusual runtime dependency.',
+    desc: 'The windowed (no console) .exe build. 31.1 MB. PyInstaller bundles everything including the Python runtime. Unusually, end users must have 7-zip installed — it is used at runtime to unpack dependencies rather than having PyInstaller handle this cleanly. A sign of the bundling getting out of hand.',
+    deps: ['seven_zip'] },
+
+  { id: 'exe_console', x: 1050, y: 660, layer: 'c', icon: '💾', title: 'Video-Downloader-Console.exe',
+    sub: '31.1 MB standalone\nConsole + GUI variant', tag: 'Output Binary',
+    warn: '⚠ Requires 7-zip installed.',
+    desc: 'The console-windowed variant of the same build — shows a terminal alongside the GUI for debug output. Also 31.1 MB. Functionally identical to the GUI build but with the console window visible. Both .exe files are committed to the repo despite being 30+ MB each.',
+    deps: ['seven_zip'] },
+
+  { id: 'seven_zip', x: 1050, y: 840, layer: 'e', icon: '🗜', title: '7-zip',
+    sub: 'Must be pre-installed\nRuntime unpack dependency', tag: 'External Tool',
+    warn: '⚠ A compiled .exe requiring a separate install to run defeats the purpose.',
+    desc: '7-zip must be installed on the end-user\'s system before the .exe will run. It is used at runtime to unpack bundled dependencies. This is an unusual and fragile design — a self-contained PyInstaller binary should not require any pre-installed tools. This was the moment that made the whole approach feel untenable, and directly motivated rebuilding the downloader in C# with YoutubeDLSharp.',
+    deps: [] },
+
+  { id: 'todo', x: 1280, y: 300, layer: 'dead', icon: '📋', title: 'TODO',
+    sub: 'Not really updated\nAbandoned task list', tag: 'Docs',
+    desc: 'A TODO file that tracked planned improvements — auto-installing yt-dlp.exe, fixing the format error, adding 2x2 matrix support (wrong project), improving the GUI layout. Not meaningfully updated once the project stalled. The C# rewrite made this file permanently irrelevant.',
+    deps: [] },
+];
+
+const edges = [
+  { from: 'main_essential', to: 'tkinter' },
+  { from: 'main_essential', to: 'yt_dlp_module' },
+  { from: 'main_essential', to: 'os' },
+  { from: 'main_essential', to: 'sys' },
+  { from: 'main_essential', to: 'json' },
+  { from: 'main_essential', to: 'requests' },
+  { from: 'main_essential', to: 'subprocess_mod' },
+
+  { from: 'test_full', to: 'tkinter' },
+  { from: 'test_full', to: 'yt_dlp_exe' },
+  { from: 'test_full', to: 'os' },
+  { from: 'test_full', to: 'sys' },
+  { from: 'test_full', to: 'json' },
+  { from: 'test_full', to: 'subprocess_mod' },
+  { from: 'test_full', to: 'threading' },
+
+  { from: 'tkinter',        to: 'python_runtime' },
+  { from: 'os',              to: 'python_runtime' },
+  { from: 'sys',             to: 'python_runtime' },
+  { from: 'json',            to: 'python_runtime' },
+  { from: 'subprocess_mod',  to: 'python_runtime' },
+  { from: 'threading',       to: 'python_runtime' },
+  { from: 'requests',        to: 'python_runtime' },
+  { from: 'yt_dlp_module',   to: 'python_runtime' },
+
+  { from: 'yt_dlp_exe',      to: 'ffmpeg_internal' },
+  { from: 'subprocess_mod',  to: 'yt_dlp_exe' },
+
+  { from: 'main_essential',  to: 'auto_py_to_exe' },
+  { from: 'auto_py_to_exe',  to: 'pyinstaller' },
+  { from: 'pyinstaller',     to: 'exe_gui' },
+  { from: 'pyinstaller',     to: 'exe_console' },
+  { from: 'pyinstaller',     to: 'python_runtime' },
+  { from: 'exe_gui',         to: 'seven_zip' },
+  { from: 'exe_console',     to: 'seven_zip' },
+];
+
+const layerColors = {
+  a: getComputedStyle(document.documentElement).getPropertyValue('--accent-a').trim(),
+  b: getComputedStyle(document.documentElement).getPropertyValue('--accent-b').trim(),
+  c: getComputedStyle(document.documentElement).getPropertyValue('--accent-c').trim(),
+  e: getComputedStyle(document.documentElement).getPropertyValue('--accent-e').trim(),
+  f: getComputedStyle(document.documentElement).getPropertyValue('--accent-f').trim(),
+  dead: '#2a3040',
+};
+
+DependencyMap.init({ nodes, edges, layerColors });
+</script>
+</body>
+</html>

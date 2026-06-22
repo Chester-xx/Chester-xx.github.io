@@ -1,0 +1,17 @@
+{
+  "name": "Max Bergmann",
+  "title": "Max Bergmann - Engineering Portfolio",
+  "role": "Software Development Engineer & IT",
+  "location": "Johannesburg",
+  "nav": [
+    { "label": "Home", "url": "/" },
+    { "label": "About", "url": "/about/" },
+    { "label": "Contact", "url": "/#contact" }
+  ],
+  "social": {
+    "email": "business.mmbergmann@gmail.com",
+    "github": "https://github.com/Chester-xx",
+    "linkedin": "https://www.linkedin.com/in/maximusbergmann/",
+    "githubUser": "Chester-xx"
+  }
+}

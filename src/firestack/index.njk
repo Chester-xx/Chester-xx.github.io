@@ -1,0 +1,123 @@
+---
+layout: base.njk
+title: FireStack - Case Study
+headerLabel: "M.B.<br>Portfolio"
+---
+
+<!-- ───────────────────────── Tags + Hero ───────────────────────── -->
+<section class="py-12 md:py-20">
+  <div class="flex flex-wrap gap-3 mb-8" data-reveal data-reveal-dir="up">
+    <span class="text-xs uppercase tracking-wider font-bold text-primary bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full">C++</span>
+    <span class="text-xs uppercase tracking-wider font-bold text-primary bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full">CMake</span>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-end">
+    <div class="lg:col-span-2" data-reveal data-reveal-dir="up">
+      <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white mb-6">
+        FireStack
+      </h1>
+      <p class="text-lg md:text-xl font-light leading-relaxed text-slate-600 dark:text-slate-300 max-w-2xl">
+        A personal C++ learning project focused on building on basics and advancing low level learning for myself. The project taught me structuring, build systems and compiler toolchain complexities such as objects and linking. This project started BlendViewer and also attempted to deepen my knowledge on data structures and algorithms.
+      </p>
+    </div>
+    <div class="lg:col-span-1" data-reveal data-reveal-dir="right">
+      <a class="group flex items-center justify-between p-6 bg-card-dark border border-slate-800 rounded-lg hover:border-primary/50 transition-all duration-300 h-full" href="https://github.com/Chester-xx/FireStack">
+        <div>
+          <h3 class="text-white font-bold text-lg mb-1 group-hover:text-primary transition-colors">GitHub Repository</h3>
+          <span class="text-sm text-slate-400">View Source Code</span>
+        </div>
+        <div class="h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300">
+          <span class="material-symbols-outlined">code</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────── Preview media ───────────────────────── -->
+<section class="py-12 md:py-20">
+  <div class="w-full aspect-video bg-card-dark rounded-xl border border-slate-800 overflow-hidden relative group" data-reveal data-reveal-dir="scale">
+    <div class="absolute inset-0 bg-gradient-to-t from-background-dark/80 to-transparent z-10 pointer-events-none"></div>
+    <img alt="FireStack Code Example" class="w-full h-full object-contain opacity-90 group-hover:scale-105 transition-transform duration-700" src="/assets/FireStack.png"/>
+    <div class="absolute bottom-6 left-6 z-20">
+      <span class="bg-black/50 backdrop-blur-md text-white text-xs uppercase tracking-widest font-bold px-3 py-2 rounded border border-white/10">Code Block</span>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────── Feature cards ───────────────────────── -->
+<section class="py-12 md:py-20">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="bg-card-dark border border-slate-800 rounded-lg p-8 hover:border-slate-700 transition-colors" data-reveal data-reveal-dir="left">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="material-symbols-outlined text-primary text-3xl">hub</span>
+        <h3 class="text-xl font-bold text-white">Architecture Dependency Map</h3>
+      </div>
+      <p class="text-slate-400 mb-6 font-light">
+        Visualizing the modular architecture separating perception, planning, and control layers. The dependency map illustrates how each module interacts, highlighting the flow of data and control signals for optimization or refactoring.
+      </p>
+      <a href="dependency-map/">
+        <div class="h-40 bg-slate-800/50 rounded border border-slate-700/50 flex items-center justify-center relative overflow-hidden group/graph cursor-pointer">
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="text-xs text-slate-500 font-mono">Live Map View</span>
+          </div>
+          <div class="absolute inset-0 bg-primary/5 opacity-0 group-hover/graph:opacity-100 transition-opacity"></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="bg-card-dark border border-slate-800 rounded-lg p-8 hover:border-slate-700 transition-colors" data-reveal data-reveal-dir="right">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="material-symbols-outlined text-primary text-3xl">download</span>
+        <h3 class="text-xl font-bold text-white">Release Downloads</h3>
+      </div>
+      <div class="space-y-4">
+        <a class="flex items-center justify-between p-4 bg-slate-800/30 rounded border border-slate-700/50 hover:bg-slate-800/60 hover:border-primary/30 transition-all group/dl" href="https://github.com/Chester-xx/FireStack/tree/main/">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-slate-400 group-hover/dl:text-primary transition-colors">terminal</span>
+            <div>
+              <div class="text-sm font-bold text-slate-200">Source Code</div>
+              <div class="text-xs text-slate-500">Non-release • Files</div>
+            </div>
+          </div>
+          <span class="material-symbols-outlined text-slate-500 text-sm">arrow_downward</span>
+        </a>
+        <a class="flex items-center justify-between p-4 bg-slate-800/30 rounded border border-slate-700/50 hover:bg-slate-800/60 hover:border-primary/30 transition-all group/dl" href="https://github.com/Chester-xx/FireStack/blob/main/README.md">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-slate-400 group-hover/dl:text-primary transition-colors">description</span>
+            <div>
+              <div class="text-sm font-bold text-slate-200">Technical Documentation</div>
+              <div class="text-xs text-slate-500">README.md • GitHub</div>
+            </div>
+          </div>
+          <span class="material-symbols-outlined text-slate-500 text-sm">arrow_downward</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────── Technical Challenges ───────────────────────── -->
+<section class="py-12 md:py-20 border-t border-slate-200 dark:border-slate-800">
+  <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-8 tracking-tight" data-reveal data-reveal-dir="left">Technical Challenges</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-slate-400">
+    <div class="space-y-3" data-reveal data-reveal-dir="up" style="--reveal-delay: 0ms">
+      <div class="text-primary font-bold text-lg mb-2">01. Software Structuring</div>
+      <p class="font-light leading-relaxed">
+        Designing and implementing a professional C++ software architecture in learning becomes quite complicated with the addition of CMake as a build system. I had to learn about best practices for organizing code, managing dependencies, and ensuring modularity and maintainability. This experience taught me the importance of software design principles and how to apply them effectively in a real-world project.
+      </p>
+    </div>
+    <div class="space-y-3" data-reveal data-reveal-dir="up" style="--reveal-delay: 90ms">
+      <div class="text-primary font-bold text-lg mb-2">02. CMake</div>
+      <p class="font-light leading-relaxed">
+        Understanding how CMake works and how it integrates with the build process was a significant challenge. I had to learn about CMake's syntax, configuration files (CMakeLists.txt), and how to manage dependencies and build targets. This experience highlighted the complexities of modern C++ build systems and the importance of understanding build tooling for effective software development.
+      </p>
+    </div>
+    <div class="space-y-3" data-reveal data-reveal-dir="up" style="--reveal-delay: 180ms">
+      <div class="text-primary font-bold text-lg mb-2">03. Modularization</div>
+      <p class="font-light leading-relaxed">
+        Breaking down the software into modular components and ensuring that they interact correctly was a complex task. I had to learn about designing interfaces, managing dependencies between modules, and ensuring that the overall architecture was cohesive and maintainable. This experience emphasized the importance of modular design in software development and how it can lead to more scalable and maintainable codebases.
+      </p>
+    </div>
+  </div>
+</section>

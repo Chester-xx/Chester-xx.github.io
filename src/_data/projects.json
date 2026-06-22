@@ -1,0 +1,50 @@
+[
+  {
+    "slug": "blendviewer",
+    "title": "BlendViewer",
+    "description": "A lightweight glTF model viewer built with Qt and OpenGL, designed for quick inspection and navigation of 3D assets.",
+    "image": "/assets/BlendViewer.png",
+    "imageAlt": "BlendViewer User Interface",
+    "tags": ["C++", "Qt", "CMake"]
+  },
+  {
+    "slug": "youtube-video-downloader",
+    "title": "YouTube Video Downloader",
+    "description": "A C# application designed to download YouTube videos fast, efficiently and reliably. Providing a simple and quick way to save videos and/or audio.",
+    "image": "/assets/VideoDownloader.png",
+    "imageAlt": "YouTube Video Downloader User Interface",
+    "tags": ["C#", ".NET", "YTDLP"]
+  },
+  {
+    "slug": "social-media-website",
+    "title": "Social Media Website",
+    "description": "@Connect - Second Year FullStack Development Assignment - Complete Social Media Website for social networking.",
+    "image": "/assets/SocialMediaWebsite.png",
+    "imageAlt": "@Connect Website Home Page",
+    "tags": ["PHP", "XAMPP", "HTML", "JavaScript"]
+  },
+  {
+    "slug": "matrix-calculator",
+    "title": "Matrix Calculator",
+    "description": "A Python application created to perform matrix operations within a graphical user interface.",
+    "image": "/assets/MatrixCalculator.png",
+    "imageAlt": "matrix calculator user interface",
+    "tags": ["Python", "CustomTKinter"]
+  },
+  {
+    "slug": "firestack",
+    "title": "FireStack",
+    "description": "Personal Application Framework for creating interesting projects in C++. Lead to the creation of BlendViewer",
+    "image": "/assets/FireStack.png",
+    "imageAlt": "FireStack Code Example",
+    "tags": ["C++", "CMake"]
+  },
+  {
+    "slug": "python-video-downloader",
+    "title": "Python Video Test Downloader",
+    "description": "Inspired my C# App, initially developed in python as a UI + terminal interface.",
+    "image": "/assets/PythonVideoDownloader.png",
+    "imageAlt": "Python Video Downloader terminal and UI",
+    "tags": ["Python", "CustomTKinter"]
+  }
+]

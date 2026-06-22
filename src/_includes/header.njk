@@ -1,0 +1,10 @@
+<header class="flex justify-between items-center mb-16 lg:mb-24" data-reveal data-reveal-chrome data-reveal-dir="up">
+  <div class="text-sm font-bold tracking-widest uppercase text-slate-400 dark:text-slate-500 pr-10">
+    {{ (headerLabel or "Project Portfolio") | safe }}
+  </div>
+  <nav class="flex gap-8">
+    {% for item in site.nav %}
+    <a class="text-sm font-medium text-slate-300 transition-colors duration-200 hover:text-[#448AFF]" href="{{ item.url }}">{{ item.label }}</a>
+    {% endfor %}
+  </nav>
+</header>

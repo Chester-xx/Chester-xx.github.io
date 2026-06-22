@@ -1,0 +1,51 @@
+---
+layout: base.njk
+title: "@Connect | Technical Outline"
+headerLabel: "M.B.<br>Portfolio"
+---
+<style>
+  .masonry-grid {
+    columns: 1;
+    column-gap: 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .masonry-grid { columns: 2; }
+  }
+  @media (min-width: 1024px) {
+    .masonry-grid { columns: 3; }
+  }
+  @media (min-width: 1280px) {
+    .masonry-grid { columns: 4; }
+  }
+  .masonry-item {
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+  }
+</style>
+
+<section class="mb-16" data-reveal data-reveal-dir="up">
+  <a href="../" class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary transition-colors mb-8">
+    <span class="material-symbols-outlined text-base">arrow_back</span>
+    Back to project
+  </a>
+  <div class="max-w-2xl">
+    <h2 class="text-4xl lg:text-5xl font-bold mb-4 leading-tight text-slate-900 dark:text-slate-100">Technical Outline</h2>
+    <div class="h-1 w-20 bg-primary mb-6"></div>
+    <p class="text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
+      Simple outline of @Connect's frontend design and example content for reference of the visual overview.
+    </p>
+  </div>
+</section>
+
+<div class="masonry-grid">
+  {% for i in range(1, 18) %}
+  <a href="assets/image{{ i }}.png" data-reveal data-reveal-dir="scale" style="--reveal-delay: {{ (i - 1) * 40 }}ms">
+    <div class="masonry-item group">
+      <div class="relative overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 transition-all duration-500 hover:border-primary/50">
+        <img class="w-full h-auto block transition-all duration-700" src="assets/image{{ i }}.png" alt="@Connect technical outline screenshot {{ i }}"/>
+        <div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+</div>

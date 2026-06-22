@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>FireStack — Dependency Map</title>
+<link rel="stylesheet" href="/css/dependency-map.css">
+<style>
+  :root {
+    --accent-a: #00e5ff; /* app */
+    --accent-b: #b388ff; /* ui */
+    --accent-c: #ffb300; /* core */
+    --accent-d: #00e676; /* container */
+    --accent-e: #ff4d6d; /* build */
+    --accent-f: #448aff; /* system */
+  }
+  .logo { color: var(--accent-c); }
+  .ctrl-btn:hover { border-color: var(--accent-c); color: var(--accent-c); }
+</style>
+</head>
+<body>
+
+<header>
+  <div><span class="logo">FireStack <span>— Architecture Dependency Map</span></span></div>
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-a)"></div> Apps</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-b)"></div> UI Module</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-c)"></div> Core Module</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-d)"></div> Container Module</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-e)"></div> Build System</div>
+    <div class="leg-item"><div class="leg-dot" style="color:var(--accent-f)"></div> Toolchain / IDE</div>
+  </div>
+  <div class="controls">
+    <button class="ctrl-btn" id="btn-reset" type="button">↺ Reset</button>
+    <button class="ctrl-btn" id="btn-zoom-in" type="button">+ Zoom</button>
+    <button class="ctrl-btn" id="btn-zoom-out" type="button">− Zoom</button>
+  </div>
+</header>
+
+<div id="canvas-wrap">
+  <canvas id="graph-canvas"></canvas>
+  <div id="nodes-layer"></div>
+</div>
+
+<div id="info-panel">
+  <button id="info-close" type="button" aria-label="Close">✕</button>
+  <h3 id="ip-title">—</h3>
+  <p id="ip-desc">—</p>
+  <div class="deps-list" id="ip-deps"></div>
+</div>
+
+<div id="hint">
+  🖱 Drag to pan &nbsp;·&nbsp; Scroll to zoom &nbsp;·&nbsp; Click node for details
+</div>
+
+<div id="mobile-hint">
+  Drag to pan · Pinch to zoom · Tap a node for details
+</div>
+
+<script src="/js/dependency-map-engine.js"></script>
+<script>
+const nodes = [
+  // ── Apps (Entry Points) ──────────────────────────────────────────────────
+  { id: 'app1', x: 300, y: 100, layer: 'a', icon: '⚡', title: 'app1',
+    sub: 'Sandbox entry point\nmain.cpp scratch app', tag: 'C++ App',
+    desc: 'apps/app1/main.cpp — general-purpose sandbox application. Used to prototype and test FireStack library features during development. Links against the firestack_core static library and has access to all include/ headers.',
+    deps: ['firestack_core', 'core_h', 'container_h', 'ui_h'] },
+
+  { id: 'blendviewer', x: 700, y: 100, layer: 'a', icon: '🎲', title: 'BlendViewer',
+    sub: 'apps/BlendViewer/main.cpp\nglTF 3D viewer app', tag: 'C++ App',
+    desc: 'apps/BlendViewer/main.cpp — the flagship app currently in development. A standalone C++ application for loading and displaying .glTF files exported from Blender. Migrated out of the old FireStack codebase into its own app within the framework. Links against firestack_core.',
+    deps: ['firestack_core', 'core_h'] },
+
+  // ── Umbrella Headers ─────────────────────────────────────────────────────
+  { id: 'core_h', x: 300, y: 280, layer: 'c', icon: '📋', title: 'core.h',
+    sub: 'include/core.h\nUmbrella for core module', tag: 'Header',
+    desc: 'Top-level umbrella header for the core module. Including this single header pulls in both logging.h and math.h, giving consumers access to the full core module without needing to list individual headers.',
+    deps: ['logging_h', 'math_h'] },
+
+  { id: 'container_h', x: 700, y: 280, layer: 'd', icon: '📋', title: 'container.h',
+    sub: 'include/container.h\nUmbrella for containers', tag: 'Header',
+    desc: 'Top-level umbrella header for the container module. Including this pulls in both SLinkedList.h and DLinkedList.h, providing access to all custom data structure implementations.',
+    deps: ['slinkedlist_h', 'dlinkedlist_h'] },
+
+  { id: 'ui_h', x: 1100, y: 280, layer: 'b', icon: '📋', title: 'ui_base.h',
+    sub: 'include/ui/ui_base.h\nBase class for all UI', tag: 'Header',
+    desc: 'Base header for the UI module. Defines the abstract or base class that all UI components (Window, Button, Input, Label, Textbox) inherit from. Establishes the common interface contract for the UI layer.',
+    deps: ['window_h', 'button_h', 'input_h', 'label_h', 'textbox_h'] },
+
+  // ── Core Module Headers ──────────────────────────────────────────────────
+  { id: 'logging_h', x: 140, y: 470, layer: 'c', icon: '📝', title: 'logging.h',
+    sub: 'include/core/logging.h\nLog macros & levels', tag: 'Core Header',
+    desc: 'Declares the logging interface for FireStack. Provides log level definitions (INFO, WARN, ERROR, DEBUG) and logging macros/functions for structured console output. Used across the framework and apps for runtime diagnostics and debug output.',
+    deps: ['logging_cpp'] },
+
+  { id: 'math_h', x: 340, y: 470, layer: 'c', icon: '🔢', title: 'math.h',
+    sub: 'include/core/math.h\nMath utilities & helpers', tag: 'Core Header',
+    desc: 'Declares math utilities for FireStack. Provides helper functions and types for common mathematical operations needed by framework components — likely including vector/scalar helpers, clamping, interpolation, and other primitives useful for future rendering work.',
+    deps: ['math_cpp'] },
+
+  // ── Container Module Headers ─────────────────────────────────────────────
+  { id: 'slinkedlist_h', x: 570, y: 470, layer: 'd', icon: '🔗', title: 'SLinkedList.h',
+    sub: 'include/container/SLinkedList.h\nSingly linked list', tag: 'Container Header',
+    desc: 'Declares the templated singly linked list data structure. Each node holds a value and a single next pointer. Provides operations such as push_front, push_back, pop, find, and traversal. Implemented without any standard library containers.',
+    deps: ['slinkedlist_cpp'] },
+
+  { id: 'dlinkedlist_h', x: 780, y: 470, layer: 'd', icon: '🔗', title: 'DLinkedList.h',
+    sub: 'include/container/DLinkedList.h\nDoubly linked list', tag: 'Container Header',
+    desc: 'Declares the templated doubly linked list data structure. Each node holds prev and next pointers enabling bidirectional traversal. Provides push, pop, insert, remove, and iteration operations. Serves as the richer alternative to SLinkedList when reverse traversal is needed.',
+    deps: ['dlinkedlist_cpp'] },
+
+  // ── UI Module Headers ────────────────────────────────────────────────────
+  { id: 'window_h', x: 960, y: 470, layer: 'b', icon: '🪟', title: 'window.h',
+    sub: 'include/ui/window.h\nTop-level window', tag: 'UI Header',
+    desc: 'Declares the Window class — the top-level UI container. Owns the main application surface and hosts child components. Inherits from ui_base and is the root of the widget hierarchy for any FireStack UI application.',
+    deps: ['window_cpp'] },
+
+  { id: 'button_h', x: 1060, y: 470, layer: 'b', icon: '🔘', title: 'button.h',
+    sub: 'include/ui/button.h\nClickable control', tag: 'UI Header',
+    desc: 'Declares the Button UI component. Inherits from ui_base. Handles click events and visual state (normal, hovered, pressed). Designed to be placed within a Window and bound to callback logic in the consuming application.',
+    deps: ['button_cpp'] },
+
+  { id: 'input_h', x: 1160, y: 470, layer: 'b', icon: '⌨️', title: 'input.h',
+    sub: 'include/ui/input.h\nText input control', tag: 'UI Header',
+    desc: 'Declares the Input UI component. Inherits from ui_base. Provides a text input field for capturing keyboard entry from the user. Exposes accessors for the current input string and supports clear/reset.',
+    deps: ['input_cpp'] },
+
+  { id: 'label_h', x: 1260, y: 470, layer: 'b', icon: '🏷', title: 'label.h',
+    sub: 'include/ui/label.h\nStatic text display', tag: 'UI Header',
+    desc: 'Declares the Label UI component. Inherits from ui_base. Renders a static or dynamically updated text string within the window. Used for headings, status messages, and field annotations.',
+    deps: ['label_cpp'] },
+
+  { id: 'textbox_h', x: 1360, y: 470, layer: 'b', icon: '📄', title: 'textbox.h',
+    sub: 'include/ui/textbox.h\nMulti-line text area', tag: 'UI Header',
+    desc: 'Declares the Textbox UI component. Inherits from ui_base. A multi-line text area for displaying or editing larger bodies of text. Differentiated from Input by supporting wrapping, scrolling, and multi-line content.',
+    deps: ['textbox_cpp'] },
+
+  // ── Source Implementations ───────────────────────────────────────────────
+  { id: 'logging_cpp', x: 140, y: 660, layer: 'c', icon: '⚙️', title: 'logging.cpp',
+    sub: 'src/core/logging.cpp\nLog implementation', tag: 'C++ Source',
+    desc: 'Implementation of the logging system declared in logging.h. Defines the actual output formatting, log level filtering, timestamp injection, and console/stream write operations. Compiled into the firestack_core static library.',
+    deps: ['firestack_core'] },
+
+  { id: 'math_cpp', x: 340, y: 660, layer: 'c', icon: '⚙️', title: 'math.cpp',
+    sub: 'src/core/math.cpp\nMath implementation', tag: 'C++ Source',
+    desc: 'Implementation of math utilities declared in math.h. Defines the bodies of all math helper functions. Compiled into the firestack_core static library and linked by any app or module that includes math.h.',
+    deps: ['firestack_core'] },
+
+  { id: 'slinkedlist_cpp', x: 570, y: 660, layer: 'd', icon: '⚙️', title: 'SLinkedList.cpp',
+    sub: 'src/container/SLinkedList.cpp\nSingly linked list impl', tag: 'C++ Source',
+    desc: 'Implementation file for the singly linked list declared in SLinkedList.h. Defines node allocation, pointer wiring for push/pop/remove operations, and list traversal. Compiled into firestack_core.',
+    deps: ['firestack_core'] },
+
+  { id: 'dlinkedlist_cpp', x: 780, y: 660, layer: 'd', icon: '⚙️', title: 'DLinkedList.cpp',
+    sub: 'src/container/DLinkedList.cpp\nDoubly linked list impl', tag: 'C++ Source',
+    desc: 'Implementation file for the doubly linked list declared in DLinkedList.h. Defines bidirectional node linking, insertion, removal, and traversal in both directions. Compiled into firestack_core.',
+    deps: ['firestack_core'] },
+
+  { id: 'ui_base_cpp', x: 960, y: 660, layer: 'b', icon: '⚙️', title: 'ui_base.cpp',
+    sub: 'src/ui/ui_base.cpp\nBase UI implementation', tag: 'C++ Source',
+    desc: 'Implementation of the ui_base class. Defines shared behaviour inherited by all UI components — common constructor logic, lifecycle hooks, and any shared rendering or event-dispatch plumbing that all widgets rely on.',
+    deps: ['firestack_core'] },
+
+  { id: 'window_cpp', x: 1060, y: 660, layer: 'b', icon: '⚙️', title: 'window.cpp',
+    sub: 'src/ui/window.cpp', tag: 'C++ Source',
+    desc: 'Implementation of the Window class. Manages the top-level surface, child component layout, and the main event loop integration point for the UI system.',
+    deps: ['firestack_core'] },
+
+  { id: 'button_cpp', x: 1160, y: 660, layer: 'b', icon: '⚙️', title: 'button.cpp',
+    sub: 'src/ui/button.cpp', tag: 'C++ Source',
+    desc: 'Implementation of the Button component. Handles hit-testing, state transitions, and callback invocation on click events.',
+    deps: ['firestack_core'] },
+
+  { id: 'input_cpp', x: 1260, y: 660, layer: 'b', icon: '⚙️', title: 'input.cpp',
+    sub: 'src/ui/input.cpp', tag: 'C++ Source',
+    desc: 'Implementation of the Input component. Manages character buffer, cursor position, keyboard event handling, and string accessor.',
+    deps: ['firestack_core'] },
+
+  { id: 'label_cpp', x: 1360, y: 660, layer: 'b', icon: '⚙️', title: 'label.cpp',
+    sub: 'src/ui/label.cpp', tag: 'C++ Source',
+    desc: 'Implementation of the Label component. Handles text rendering and dynamic string updates.',
+    deps: ['firestack_core'] },
+
+  { id: 'textbox_cpp', x: 1460, y: 660, layer: 'b', icon: '⚙️', title: 'textbox.cpp',
+    sub: 'src/ui/textbox.cpp', tag: 'C++ Source',
+    desc: 'Implementation of the Textbox component. Handles multi-line text layout, scrolling, and content management.',
+    deps: ['firestack_core'] },
+
+  // ── Static Library Output ────────────────────────────────────────────────
+  { id: 'firestack_core', x: 800, y: 860, layer: 'e', icon: '📦', title: 'firestack_core',
+    sub: 'Static library target\nAll src/ compiled into .lib', tag: 'CMake Target',
+    desc: 'The core CMake static library target defined in src/CMakeLists.txt. All .cpp files in src/container/, src/core/, and src/ui/ are compiled into this single library. Both app1 and BlendViewer link against it. Built to out/build/debug/ or out/build/x64-Debug/ by Ninja.',
+    deps: ['cmake', 'mingw32', 'ninja'] },
+
+  // ── Build System ─────────────────────────────────────────────────────────
+  { id: 'cmake', x: 500, y: 1040, layer: 'e', icon: '⚒️', title: 'CMake',
+    sub: 'CMakeLists.txt (root + sub)\nCMakePresets.json config', tag: 'Build System',
+    desc: 'CMake orchestrates the entire build. The root CMakeLists.txt defines the project, adds subdirectories (src/, apps/), and configures include paths. CMakePresets.json and CMakeUserPresets.json define named configure/build presets (debug, x64-Debug). apps/ and src/ each have their own CMakeLists.txt.',
+    deps: ['ninja', 'mingw32'] },
+
+  { id: 'ninja', x: 800, y: 1040, layer: 'e', icon: '⚡', title: 'Ninja',
+    sub: 'build.ninja generated\nFast incremental builds', tag: 'Build Backend',
+    desc: 'Ninja is the CMake build backend used for both the debug and x64-Debug presets. CMake generates build.ninja in out/build/. Ninja executes the minimal set of compile and link steps needed on each incremental build — significantly faster than MSBuild for large C++ projects.',
+    deps: [] },
+
+  { id: 'mingw32', x: 1100, y: 1040, layer: 'f', icon: '🔧', title: 'MinGW32',
+    sub: 'g++.exe · ar.exe\nC++17/20 toolchain', tag: 'Compiler',
+    desc: 'MinGW32 compiler toolchain (migrated from MSVC). g++.exe compiles .cpp files to .obj, ar.exe produces the static library. Configured via CMake\'s CMakeCXXCompiler.cmake.',
+    deps: [] },
+
+  { id: 'VS Code', x: 1350, y: 1040, layer: 'f', icon: '🖥', title: 'VS Code',
+    sub: 'IDE · CMake integration\nDoxygen · Copilot indices', tag: 'IDE',
+    desc: 'VS Code is the development IDE. Opens FireStack as a CMake project (not a .sln). The .vs/ folder contains VS workspace state, Copilot semantic indices (CodeChunks.db, SemanticSymbols.db), file content index, and precompiled header cache (MAIN.ipch). Doxygen comment formatting is used manually for documentation.',
+    deps: ['cmake', 'mingw32'] },
+
+  { id: 'doxygen', x: 1350, y: 860, layer: 'f', icon: '📚', title: 'Doxygen',
+    sub: 'Manual comment formatting\nDox-style doc headers', tag: 'Documentation',
+    desc: 'Doxygen-style comment formatting is used manually across the codebase headers. Provides structured /** @brief, @param, @return */ annotations that can be processed into HTML or PDF documentation. Not automated in the build pipeline — applied by hand during development.',
+    deps: [] },
+];
+
+const edges = [
+  { from: 'app1',          to: 'core_h' },
+  { from: 'app1',          to: 'container_h' },
+  { from: 'app1',          to: 'ui_h' },
+  { from: 'app1',          to: 'firestack_core' },
+  { from: 'blendviewer',   to: 'core_h' },
+  { from: 'blendviewer',   to: 'firestack_core' },
+
+  { from: 'core_h',        to: 'logging_h' },
+  { from: 'core_h',        to: 'math_h' },
+  { from: 'container_h',   to: 'slinkedlist_h' },
+  { from: 'container_h',   to: 'dlinkedlist_h' },
+  { from: 'ui_h',          to: 'window_h' },
+  { from: 'ui_h',          to: 'button_h' },
+  { from: 'ui_h',          to: 'input_h' },
+  { from: 'ui_h',          to: 'label_h' },
+  { from: 'ui_h',          to: 'textbox_h' },
+
+  { from: 'logging_h',     to: 'logging_cpp' },
+  { from: 'math_h',        to: 'math_cpp' },
+  { from: 'slinkedlist_h', to: 'slinkedlist_cpp' },
+  { from: 'dlinkedlist_h', to: 'dlinkedlist_cpp' },
+  { from: 'window_h',      to: 'window_cpp' },
+  { from: 'button_h',      to: 'button_cpp' },
+  { from: 'input_h',       to: 'input_cpp' },
+  { from: 'label_h',       to: 'label_cpp' },
+  { from: 'textbox_h',     to: 'textbox_cpp' },
+  { from: 'ui_h',          to: 'ui_base_cpp' },
+
+  { from: 'logging_cpp',     to: 'firestack_core' },
+  { from: 'math_cpp',        to: 'firestack_core' },
+  { from: 'slinkedlist_cpp', to: 'firestack_core' },
+  { from: 'dlinkedlist_cpp', to: 'firestack_core' },
+  { from: 'ui_base_cpp',     to: 'firestack_core' },
+  { from: 'window_cpp',      to: 'firestack_core' },
+  { from: 'button_cpp',      to: 'firestack_core' },
+  { from: 'input_cpp',       to: 'firestack_core' },
+  { from: 'label_cpp',       to: 'firestack_core' },
+  { from: 'textbox_cpp',     to: 'firestack_core' },
+
+  { from: 'firestack_core', to: 'cmake' },
+  { from: 'cmake',          to: 'ninja' },
+  { from: 'cmake',          to: 'mingw32' },
+  { from: 'VS Code',        to: 'cmake' },
+  { from: 'VS Code',        to: 'mingw32' },
+  { from: 'doxygen',        to: 'core_h' },
+  { from: 'doxygen',        to: 'container_h' },
+  { from: 'doxygen',        to: 'ui_h' },
+];
+
+const layerColors = {
+  a: getComputedStyle(document.documentElement).getPropertyValue('--accent-a').trim(),
+  b: getComputedStyle(document.documentElement).getPropertyValue('--accent-b').trim(),
+  c: getComputedStyle(document.documentElement).getPropertyValue('--accent-c').trim(),
+  d: getComputedStyle(document.documentElement).getPropertyValue('--accent-d').trim(),
+  e: getComputedStyle(document.documentElement).getPropertyValue('--accent-e').trim(),
+  f: getComputedStyle(document.documentElement).getPropertyValue('--accent-f').trim(),
+};
+
+DependencyMap.init({ nodes, edges, layerColors });
+</script>
+</body>
+</html>
