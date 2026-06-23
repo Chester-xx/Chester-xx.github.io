@@ -13,7 +13,7 @@
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col antialiased selection:bg-primary selection:text-white">
 <div class="fixed inset-0 pointer-events-none opacity-[0.05] z-0 bg-grid-pattern"></div>
-{% if showWireframe %}
+{% if showWireframe or showWireframeField %}
 <div class="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
   <svg id="wireframe-svg" preserveAspectRatio="xMidYMid meet"></svg>
 </div>
@@ -32,6 +32,9 @@
 <script src="/js/reveal.js" defer></script>
 {% if showWireframe %}
 <script src="/js/wireframe.js" defer></script>
+{% endif %}
+{% if showWireframeField %}
+<script src="/js/wireframe-field.js" defer></script>
 {% endif %}
 </body>
 </html>
